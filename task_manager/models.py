@@ -19,8 +19,8 @@ class Position(models.Model):
 class Worker(AbstractUser):
     position = models.ForeignKey(
         Position,
-        on_delete=models.SET_DEFAULT,
-        default="Probation period",
+        on_delete=models.SET_NULL,
+        null=True,
         related_name="workers"
     )
 
@@ -49,7 +49,11 @@ class Task(models.Model):
 
 class Team(models.Model):
     name = models.CharField(max_length=255)
-    team_lead = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, related_name="teams_team_lead")
+    team_lead = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        related_name="teams_team_lead", null=True
+    )
     workers = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="teams")
 
 
