@@ -37,6 +37,11 @@ class Worker(AbstractUser):
         return f"{self.first_name} {self.last_name}"
 
 
+    class Meta:
+        verbose_name = "worker"
+        verbose_name_plural = "workers"
+
+
 class Task(models.Model):
 
     PRIORITY_CHOICES = (
