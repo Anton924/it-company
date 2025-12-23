@@ -7,13 +7,22 @@ from it_company import settings
 class Tag(models.Model):
     name = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.name
+
 
 class TaskType(models.Model):
     name = models.CharField(max_length=255)
 
+    def __str__(self):
+        return self.name
+
 
 class Position(models.Model):
     name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
 
 
 class Worker(AbstractUser):
@@ -23,6 +32,9 @@ class Worker(AbstractUser):
         null=True,
         related_name="workers"
     )
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name}"
 
 
 class Task(models.Model):
@@ -40,7 +52,8 @@ class Task(models.Model):
     is_completed = models.BooleanField()
     priority = models.CharField(
         max_length=255,
-        choices=PRIORITY_CHOICES, default="MEDIUM"
+        choices=PRIORITY_CHOICES,
+        default="MEDIUM"
     )
     task_type = models.ForeignKey(TaskType, on_delete=models.CASCADE, related_name="tasks")
     assignees = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="tasks")
@@ -52,7 +65,8 @@ class Team(models.Model):
     team_lead = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
-        related_name="teams_team_lead", null=True
+        related_name="teams_team_lead",
+        null=True
     )
     workers = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="teams")
 
