@@ -59,7 +59,25 @@ class TaskAdmin(admin.ModelAdmin):
         "get_assignees", "get_tags"
     )
     search_fields = ("name", "assignees__first_name", "assignees__last_name")
-    list_filter = ("deadline", "is_completed", "priority", "task_type", "tags__name")
+    list_filter = (
+        "deadline", "is_completed",
+        "priority", "task_type",
+        "tags__name"
+    )
+    fieldsets = (
+        ("Core Information", {"fields": ("name", "description")}),
+        ("Status & Priority", {"fields": ("priority", "is_completed")}),
+        ("Time Management", {"fields": ("deadline",)}),
+        ("Classifications", {"fields": ("task_type", "tags")}),
+        ("Ownership", {"fields": ("assignees",)})
+    )
+    add_fieldsets = (
+        ("Core Information", {"fields": ("name", "description")}),
+        ("Status & Priority", {"fields": ("priority", "is_completed")}),
+        ("Time Management", {"fields": ("deadline",)}),
+        ("Classifications", {"fields": ("task_type", "tags")}),
+        ("Ownership", {"fields": ("assignees",)})
+    )
 
 
     def get_assignees(self, obj):
@@ -67,6 +85,8 @@ class TaskAdmin(admin.ModelAdmin):
 
     def get_tags(self, obj):
         return ", ".join([str(tag) for tag in obj.tags.all()])
+
+
 
 
 @admin.register(Team)
@@ -96,6 +116,3 @@ class ProjectAdmin(admin.ModelAdmin):
     @admin.display(description="Teams")
     def get_teams(self, obj):
         return ", ".join([team.name for team in obj.teams.all()])
-
-
-
