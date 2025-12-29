@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from it_company import settings
@@ -80,3 +79,4 @@ class Project(models.Model):
     name = models.CharField(max_length=255)
     tasks = models.ManyToManyField(Task, related_name="projects") # I have to decide to user many2many or foreignkey
     teams = models.ManyToManyField(Team, related_name="projects")
+    budget = models.IntegerField()
