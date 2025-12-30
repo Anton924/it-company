@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.db.models.aggregates import Sum, Count
 from django.http import HttpRequest
 from django.shortcuts import render
 from task_manager.models import Task, Project, Team
@@ -13,8 +14,16 @@ def index(request: HttpRequest):
         "total_tasks_in_process": total_tasks_in_process,
         "total_projects": total_projects,
         "total_workers": total_workers,
-        "total_teams": total_teams
+        "total_teams": total_teams,
+        "segment": "dashboard",
+        "projects": Project.objects.annotate(
+            total_tasks=Count("tasks", distinct=True),
+            total_teams=Count("teams", distinct=True)
+        ),
+        "teams": Team.objects.annotate(
+            total_workers=Count("workers", distinct=True)
+        )
     }
 
-    return render(request, template_name="index.html", context=context)
+    return render(request, template_name="task_manager/index.html", context=context)
 
