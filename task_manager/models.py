@@ -81,4 +81,4 @@ class Task(models.Model):
     task_type = models.ForeignKey(TaskType, on_delete=models.CASCADE, related_name="tasks")
     assignees = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="tasks")
     tags = models.ManyToManyField(Tag, related_name="tasks")
-    project = models.ForeignKey(Project, on_delete=models.SET_NULL, null=True, related_name="tasks")
+    project = models.ForeignKey(Project, on_delete=models.SET_NULL, null=True, blank=True, related_name="tasks")
