@@ -40,6 +40,25 @@ class Worker(AbstractUser):
         verbose_name = "worker"
         verbose_name_plural = "workers"
 
+class Team(models.Model):
+    name = models.CharField(max_length=255)
+    team_lead = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        related_name="teams_team_lead",
+        null=True
+    )
+    workers = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="teams")
+
+
+class Project(models.Model):
+    name = models.CharField(max_length=255)
+    teams = models.ManyToManyField(Team, related_name="projects")
+    budget = models.IntegerField()
+
+    def __str__(self):
+        return self.name
+
 
 class Task(models.Model):
 
@@ -62,21 +81,4 @@ class Task(models.Model):
     task_type = models.ForeignKey(TaskType, on_delete=models.CASCADE, related_name="tasks")
     assignees = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="tasks")
     tags = models.ManyToManyField(Tag, related_name="tasks")
-
-
-class Team(models.Model):
-    name = models.CharField(max_length=255)
-    team_lead = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.SET_NULL,
-        related_name="teams_team_lead",
-        null=True
-    )
-    workers = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="teams")
-
-
-class Project(models.Model):
-    name = models.CharField(max_length=255)
-    tasks = models.ManyToManyField(Task, related_name="projects") # I have to decide to user many2many or foreignkey
-    teams = models.ManyToManyField(Team, related_name="projects")
-    budget = models.IntegerField()
+    project = models.ForeignKey(Project, on_delete=models.SET_NULL, null=True, related_name="tasks")
