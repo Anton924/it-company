@@ -56,33 +56,35 @@ class TaskAdmin(admin.ModelAdmin):
         "name", "description",
         "deadline", "is_completed",
         "priority", "task_type",
-        "get_assignees", "get_tags"
+        "project", "get_assignees",
+        "get_tags"
     )
     search_fields = ("name", "assignees__first_name", "assignees__last_name")
     list_filter = (
         "deadline", "is_completed",
         "priority", "task_type",
-        "tags__name"
+        "tags__name", "project"
     )
     fieldsets = (
         ("Core Information", {"fields": ("name", "description")}),
-        ("Status & Priority", {"fields": ("priority", "is_completed")}),
+        ("Status & Priority", {"fields": ("priority", "is_completed", "project")}),
         ("Time Management", {"fields": ("deadline",)}),
         ("Classifications", {"fields": ("task_type", "tags")}),
         ("Ownership", {"fields": ("assignees",)})
     )
     add_fieldsets = (
         ("Core Information", {"fields": ("name", "description")}),
-        ("Status & Priority", {"fields": ("priority", "is_completed")}),
+        ("Status & Priority", {"fields": ("priority", "is_completed", "project")}),
         ("Time Management", {"fields": ("deadline",)}),
         ("Classifications", {"fields": ("task_type", "tags")}),
         ("Ownership", {"fields": ("assignees",)})
     )
 
-
+    @admin.display(description="Assigness")
     def get_assignees(self, obj):
         return ", ".join([str(worker) for worker in obj.assignees.all()])
 
+    @admin.display(description="Tags")
     def get_tags(self, obj):
         return ", ".join([str(tag) for tag in obj.tags.all()])
 
@@ -100,18 +102,15 @@ class TeamAdmin(admin.ModelAdmin):
         "workers__last_name"
     )
 
+    @admin.display(description="Workers")
     def get_workers(self, obj):
         return ", ".join([str(worker) for worker in obj.workers.all()])
 
 
 @admin.register(Project)
 class ProjectAdmin(admin.ModelAdmin):
-    list_display = ("name", "get_tasks", "get_teams")
+    list_display = ("name", "get_teams")
     search_fields = ("name", "tasks__name", "teams__name")
-
-    @admin.display(description="Tasks")
-    def get_tasks(self, obj):
-        return ", ".join([task.name for task in obj.tasks.all()])
 
     @admin.display(description="Teams")
     def get_teams(self, obj):
