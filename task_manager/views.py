@@ -4,11 +4,17 @@ from django.http import HttpRequest
 from django.shortcuts import render
 from task_manager.models import Task, Project, Team
 
+
 def index(request: HttpRequest):
     total_tasks_in_process = Task.objects.filter(is_completed=False).count()
     total_projects = Project.objects.count()
     total_workers = get_user_model().objects.count()
     total_teams = Team.objects.count()
+    tasks = None
+    if request.user.is_authenticated:
+        tasks = Task.objects.filter(is_completed=False, assignees=request.user).order_by("deadline")[:10]
+    visit_times = request.session.get("visit_times", 0) + 1
+    request.session["visit_times"] = visit_times
 
     context = {
         "total_tasks_in_process": total_tasks_in_process,
@@ -20,9 +26,8 @@ def index(request: HttpRequest):
             total_tasks=Count("tasks", distinct=True),
             total_teams=Count("teams", distinct=True)
         ),
-        "teams": Team.objects.annotate(
-            total_workers=Count("workers", distinct=True)
-        )
+        "tasks": tasks,
+        "visit_times": visit_times
     }
 
     return render(request, template_name="task_manager/index.html", context=context)
