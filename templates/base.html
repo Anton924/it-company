@@ -7,9 +7,12 @@
 <html lang="en">
 
 <head>
-    {% include "includes/head.html" %}
-    {% block extrastyle %}{% endblock extrastyle %}
-    {% block extrahead %}{% endblock extrahead %}
+	{% include "includes/head.html" %}
+	{% block extrastyle %}{% endblock extrastyle %}
+	{% block extrahead %}{% endblock extrahead %}
+	<title>
+		{% block title %}{% endblock %}
+	</title>
 </head>
 
 <body class="g-sidenav-show  bg-gray-100">
