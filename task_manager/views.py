@@ -1,7 +1,11 @@
 from django.contrib.auth import get_user_model
-from django.db.models.aggregates import Sum, Count
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models.aggregates import Count
 from django.http import HttpRequest
 from django.shortcuts import render
+from django.views import generic
+
+
 from task_manager.models import Task, Project, Team
 
 
@@ -32,3 +36,20 @@ def index(request: HttpRequest):
 
     return render(request, template_name="task_manager/index.html", context=context)
 
+
+class TaskListView(LoginRequiredMixin, generic.ListView):
+    model = Task
+
+    def get_context_data(
+        self, *, object_list = ..., **kwargs
+    ):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "tasks"
+
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.select_related("task_type", "project").prefetch_related("assignees", "tags")
+
+        return queryset
