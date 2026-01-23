@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}
+	Dashboard
+{% endblock %}
+
 
 {% block content %}
 	<div class="container-fluid py-2 d-flex flex-column" style="min-height: calc(100vh - 60px)">
@@ -132,6 +136,12 @@
 														<span class="text-xs font-weight-bold">{{ project.total_teams }}</span>
 													</div>
 												</div>
+											</td>
+										</tr>
+									{% empty %}
+										<tr>
+											<td colspan="4" class="align-middle text-center">
+												<h6 class="mb-0 text-sm">There are no projects, you are working right now</h6>
 											</td>
 										</tr>
 									{% endfor %}
