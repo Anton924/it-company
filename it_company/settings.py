@@ -33,7 +33,6 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     "django.contrib.admin",
     'jazzmin',
-    'admin_material.apps.AdminMaterialDashboardConfig',
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
@@ -41,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "task_manager",
     "crispy_forms",
+    "crispy_bootstrap5",
     "debug_toolbar",
 ]
 
@@ -133,3 +133,9 @@ STATICFILES_DIRS = [
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+
+CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
+
+CRISPY_TEMPLATE_PACK = "bootstrap5"
+
+LOGIN_REDIRECT_URL = "/"
