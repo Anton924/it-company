@@ -192,6 +192,12 @@
 												<span class="text-xs font-weight-bold"> {{ team.total_workers }} </span>
 											</td>
 										</tr>
+									{% empty %}
+										<tr>
+											<td colspan="3" class="align-middle text-center">
+														<h6 class="mb-0 text-sm">You are not participating in any team</h6>
+											</td>
+										</tr>
 									{% endfor %}
 									</tbody>
 								</table>
