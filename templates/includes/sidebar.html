@@ -1,0 +1,45 @@
+{% load static admin_material %}
+
+<aside style="z-index: 1;"
+       class="sidenav navbar navbar-vertical navbar-expand-xs border-radius-lg fixed-start ms-2  bg-white my-2"
+       id="sidenav-main">
+	<div class="sidenav-header">
+		<i class="fas fa-times p-3 cursor-pointer text-dark opacity-5 position-absolute end-0 top-0 d-none d-xl-none"
+		   aria-hidden="true" id="iconSidenav"></i>
+		<a class="navbar-brand px-4 py-3 m-0" href="{% url "task_manager:index" %}">
+			<img src="{% static "assets/img/favicon.png" %}" class="navbar-brand-img" width="26" height="26" alt="main_logo">
+			<span class="ms-1 text-sm text-dark">
+          IT Task Manager
+        </span>
+		</a>
+	</div>
+	{% if request.user.is_authenticated %}
+		<li class="nav-item">
+			<a class="nav-link text-dark" href="{% url "logout" %}">
+				<i class="material-symbols-rounded opacity-5">logout</i>
+				<span class="nav-link-text ms-1">Log out</span>
+			</a>
+		</li>
+	{% else %}
+		<li class="nav-item">
+			<a class="nav-link text-dark" href="{% url "login" %}">
+				<i class="material-symbols-rounded opacity-5">login</i>
+				<span class="nav-link-text ms-1">Sign Up</span>
+			</a>
+		</li>
+	{% endif %}
+	<li class="nav-item">
+		<a class="nav-link {% if 'dashboard' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}"
+		   href="{% url "task_manager:index" %}">
+			<i class="material-symbols-rounded opacity-5">dashboard</i>
+			<span class="nav-link-text ms-1">Dashboard</span>
+		</a>
+	</li>
+	<li class="nav-item">
+		<a class="nav-link {% if 'tasks' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}"
+		   href="{% url "task_manager:task-list" %}">
+			<i class="material-symbols-rounded opacity-5">task</i>
+			<span class="nav-link-text ms-1">Tasks</span>
+		</a>
+	</li>
+</aside>

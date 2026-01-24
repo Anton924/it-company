@@ -1,0 +1,229 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+	Dashboard
+{% endblock %}
+
+
+{% block content %}
+	<div class="container-fluid py-2 d-flex flex-column" style="min-height: calc(100vh - 60px)">
+		<div class="row mb-4 mx-0">
+			<div class="ms-3">
+				<h3 class="mb-0 h4 font-weight-bolder">Dashboard</h3>
+				<p class="mb-4">
+					Check project health, sprint status and system uptime.
+				</p>
+			</div>
+			<div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+				<a href="{% url "task_manager:index" %}">
+					<div class="card">
+						<div class="p-2 ps-3">
+							<div class="d-flex justify-content-between">
+								<div>
+									<p class="text-sm mb-0 text-capitalize">Tasks in progress</p>
+									<h4 class="mb-0">{{ total_tasks_in_process }}</h4>
+								</div>
+								<div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
+									<i class="material-symbols-rounded opacity-10">task</i>
+								</div>
+							</div>
+						</div>
+					</div>
+				</a>
+			</div>
+			<div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+				<a href="{% url "task_manager:index" %}">
+					<div class="card">
+						<div class="p-2 ps-3">
+							<div class="d-flex justify-content-between">
+								<div>
+									<p class="text-sm mb-0 text-capitalize">Projects in progress</p>
+									<h4 class="mb-0">{{ total_projects }}</h4>
+								</div>
+								<div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
+									<i class="material-symbols-rounded opacity-10">inventory_2</i>
+								</div>
+							</div>
+						</div>
+					</div>
+				</a>
+			</div>
+			<div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
+				<a href="{% url "task_manager:index" %}">
+					<div class="card">
+						<div class="p-2 ps-3">
+							<div class="d-flex justify-content-between">
+								<div>
+									<p class="text-sm mb-0 text-capitalize">People in our family</p>
+									<h4 class="mb-0">{{ total_workers }}</h4>
+								</div>
+								<div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
+									<i class="material-symbols-rounded opacity-10">groups</i>
+								</div>
+							</div>
+						</div>
+					</div>
+				</a>
+			</div>
+			<div class="col-xl-3 col-sm-6">
+
+				<div class="card">
+					<a href="{% url "task_manager:index" %}">
+						<div class="p-2 ps-3">
+							<div class="d-flex justify-content-between">
+								<div>
+									<p class="text-sm mb-0 text-capitalize">You have visited this page</p>
+									<h4 class="mb-0">{{ visit_times }}</h4>
+								</div>
+								<div class="icon icon-md icon-shape bg-gradient-dark shadow-dark shadow text-center border-radius-lg">
+									<i class="material-symbols-rounded opacity-10">diversity_3</i>
+								</div>
+							</div>
+						</div>
+					</a>
+				</div>
+			</div>
+		</div>
+
+		{# ----------------------------- Table with projects ------------------------------------ #}
+		<div class="row mb-4 mx-0 flex-grow-1">
+			{% if request.user.is_authenticated %}
+				<div class="col-lg-6 col-md-6 mb-md-0 mb-4">
+					<div class="card">
+						<div class="card-header pb-0">
+							<div class="row">
+								<div class="col-lg-6 col-7">
+									<h6>Projects</h6>
+								</div>
+							</div>
+						</div>
+						<div class="card-body px-0 pb-2">
+							<div class="table-responsive">
+								<table class="table align-items-center mb-0">
+									<thead>
+									<tr>
+										<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+										<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Num of Tasks</th>
+										<th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Budget
+										</th>
+										<th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Num of Teams</th>
+									</tr>
+									</thead>
+									<tbody>
+									{% for project in projects %}
+										<tr>
+											<td>
+												<div class="d-flex px-2 py-1">
+													<div class="d-flex flex-column justify-content-center">
+														<h6 class="mb-0 text-sm">{{ project.name }}</h6>
+													</div>
+												</div>
+											</td>
+											<td>
+												<div class="align-middle text-center">
+													<div class="d-flex flex-column justify-content-center">
+														<span class="text-xs font-weight-bold">{{ project.total_tasks }}</span>
+													</div>
+												</div>
+											</td>
+											<td class="align-middle text-center text-sm">
+												<span class="text-xs font-weight-bold"> {{ project.budget }} </span>
+											</td>
+											<td>
+												<div class="align-middle text-center">
+													<div class="d-flex flex-column justify-content-center">
+														<span class="text-xs font-weight-bold">{{ project.total_teams }}</span>
+													</div>
+												</div>
+											</td>
+										</tr>
+									{% empty %}
+										<tr>
+											<td colspan="4" class="align-middle text-center">
+												<h6 class="mb-0 text-sm">There are no projects, you are working right now</h6>
+											</td>
+										</tr>
+									{% endfor %}
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			{# ----------------------------- Table with teams ------------------------------------ #}
+				<div class="col-lg-6 col-md-6 mb-md-0 mb-4">
+					<div class="card">
+						<div class="card-header pb-0">
+							<div class="row">
+								<div class="col-lg-6 col-7">
+									<h6>Teams</h6>
+								</div>
+							</div>
+						</div>
+						<div class="card-body px-0 pb-2">
+							<div class="table-responsive">
+								<table class="table align-items-center mb-0">
+									<thead>
+									<tr>
+										<th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+										<th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Team-lead</th>
+										<th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Num of workers</th>
+									</tr>
+									</thead>
+									<tbody>
+									{% for team in teams %}
+										<tr>
+											<td>
+												<div class="d-flex px-2 py-1">
+													<div class="d-flex flex-column justify-content-center">
+														<h6 class="mb-0 text-sm">{{ team.name }}</h6>
+													</div>
+												</div>
+											</td>
+											<td>
+												<div class="d-flex px-2 py-1">
+													<div class="d-flex flex-column justify-content-center">
+														<h6 class="mb-0 text-sm">{{ team.team_lead }}</h6>
+													</div>
+												</div>
+											</td>
+											<td class="align-middle text-center">
+												<span class="text-xs font-weight-bold"> {{ team.total_workers }} </span>
+											</td>
+										</tr>
+									{% empty %}
+										<tr>
+											<td colspan="3" class="align-middle text-center">
+														<h6 class="mb-0 text-sm">You are not participating in any team</h6>
+											</td>
+										</tr>
+									{% endfor %}
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			{% else %}
+				<div class="col-lg-10 col-md-10 col-sm-12 mb-md-0 mb-4 mx-auto">
+					<div class="card shadow-sm">
+						<div class="card-body py-5 text-center">
+							<i class="material-symbols-rounded">lock</i>
+							<h2 class="font-weight-bold text-gradient text-warning">Access Denied</h2>
+							<p class="text-secondary font-weight-bold">
+								Please log in to view projects and teams data.
+							</p>
+							<a href="{% url "login" %}" class="btn btn-warning btn-sm mt-2">Log in</a>
+						</div>
+					</div>
+				</div>
+			{% endif %}
+		</div>
+		<div class="mt-auto">
+			{% include "includes/footer.html" %}
+		</div>
+	</div>
+
+
+{% endblock content %}
