@@ -26,10 +26,10 @@
             <ul class="dropdown-menu  dropdown-menu-end  px-2 py-3 me-sm-n4" aria-labelledby="dropdownMenuButton">
 	            {% if request.user.is_authenticated %}
 		            <p class="font-weight-bold mb-0">Your tasks</p>
-		            {% for task in tasks %}
+		            {% for task in navigation_tasks %}
 			            {% if task %}
 				            <li class="mb-2">
-			                <a class="dropdown-item border-radius-md" href="#"> {# link to the full task #}
+			                <a class="dropdown-item border-radius-md" href="{% url "task_manager:task-update" pk=task.pk %}"> {# link to the full task #}
 			                  <div class="d-flex py-1">
 				                  <div class="my-auto">
 			                        <i class="material-symbols-rounded">fiber_manual_record</i>
