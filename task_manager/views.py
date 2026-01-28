@@ -53,3 +53,15 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
         queryset = queryset.select_related("task_type", "project").prefetch_related("assignees", "tags")
 
         return queryset
+
+
+class TaskUpdateView(generic.UpdateView):
+    model = Task
+    fields = "__all__"
+    success_url = reverse_lazy("task_manager:task-list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "task edit"
+
+        return context
