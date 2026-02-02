@@ -81,7 +81,7 @@
 		                      <a href="{% url "task_manager:task-update" pk=task.pk %}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit task">Edit</a>
 	                      </td>
 	                      <td class="align-middle">
-		                      <a href="#" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Delete task">Delete</a>
+		                      <a href="{% url "task_manager:task-delete" pk=task.pk %}" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Delete task">Delete</a>
 	                      </td>
 	                    </tr>
                     {% endfor %}
