@@ -65,3 +65,29 @@ class TaskUpdateView(generic.UpdateView):
         context["segment"] = "task edit"
 
         return context
+
+
+class TaskDeleteView(generic.DeleteView, LoginRequiredMixin):
+    model = Task
+    success_url = reverse_lazy("task_manager:task-list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context["segment"] = "delete task"
+
+        return context
+
+
+class TaskCreateView(generic.CreateView, LoginRequiredMixin):
+    model = Task
+    form_class = TaskForm
+    success_url = reverse_lazy("task_manager:task-list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "create task"
+
+        return context
+
+
+
