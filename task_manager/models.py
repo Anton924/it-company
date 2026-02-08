@@ -5,6 +5,7 @@ from it_company import settings
 
 class Tag(models.Model):
     name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
 
     def __str__(self):
         return self.name
@@ -52,9 +53,17 @@ class Team(models.Model):
 
 
 class Project(models.Model):
+    STATUS_CHOICES = (
+        ("IN_PROCESS", "in process"),
+        ("DONE", "done"),
+        ("PAUSED", "paused"),
+        ("CANCELED", "canceled")
+    )
     name = models.CharField(max_length=255)
     teams = models.ManyToManyField(Team, related_name="projects")
     budget = models.IntegerField()
+    description = models.TextField(blank=True)
+    status = models.CharField(max_length=255 ,choices=STATUS_CHOICES, default="IN_PROCESS")
 
     def __str__(self):
         return self.name
