@@ -1,7 +1,7 @@
 from django import forms
 from django.forms.widgets import CheckboxSelectMultiple
 
-from task_manager.models import Tag, Task
+from task_manager.models import Task, Team
 
 
 class TaskForm(forms.ModelForm):
@@ -21,3 +21,17 @@ class TaskForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.fields["task_type"].empty_label = "Choose type of task..."
         self.fields["project"].empty_label = "Choose project this task belong..."
+
+
+class TeamForm(forms.ModelForm):
+    class Meta:
+        model = Team
+        fields = "__all__"
+
+        widgets = {
+            "workers": CheckboxSelectMultiple
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["team_lead"].empty_label = "Choose team leader..."
