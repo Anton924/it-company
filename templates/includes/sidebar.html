@@ -72,4 +72,9 @@
 	</li>
 	<li class="nav-item">
 		<a class="nav-link {% if 'workers' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}"
+		   href="{% url "task_manager:worker-list" %}">
+			<i class="material-symbols-rounded opacity-5">badge</i>
+			<span class="nav-link-text ms-1">Workers</span>
+		</a>
+	</li>
 </aside>

@@ -23,16 +23,21 @@
                             {% csrf_token %}
                             <input type="hidden" name="next" value="{{ next }}">
 
-                            <a href="{% url "task_manager:task-list" %}" class="btn btn-outline-secondary px-4">
-                                No, Cancel
-                            </a>
+            <div class="d-grid gap-3">
+              <button type="submit" class="btn bg-gradient-danger btn-lg mb-0 shadow-danger text-capitalize font-weight-bold">
+                Delete Task
+              </button>
 
-                            <input type="submit" class="btn btn-danger px-4" value="Yes, Delete">
-                        </form>
-                    </div>
-                </div>
+              <a href="{% if request.GET.next %}{{ request.GET.next }}{% else %}{% url 'task_manager:task-list' %}{% endif %}" class="btn btn-link text-secondary mb-0 text-capitalize">
+                Cancel, keep it
+              </a>
             </div>
+          </form>
+
         </div>
+      </div>
+
     </div>
+  </div>
 </div>
 {% endblock %}
