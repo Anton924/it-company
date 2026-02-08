@@ -339,3 +339,9 @@ class WorkerListView(LoginRequiredMixin, generic.ListView):
         context["segment"] = "workers"
 
         return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.prefetch_related("teams_team_lead", "teams", "tasks").select_related("position")
+
+        return queryset
