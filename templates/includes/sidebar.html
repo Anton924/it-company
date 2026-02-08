@@ -38,8 +38,36 @@
 	<li class="nav-item">
 		<a class="nav-link {% if 'tasks' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}"
 		   href="{% url "task_manager:task-list" %}">
-			<i class="material-symbols-rounded opacity-5">task</i>
+			<i class="material-symbols-rounded opacity-5">checklist</i>
 			<span class="nav-link-text ms-1">Tasks</span>
+		</a>
+	</li>
+	<li class="nav-item">
+		<a class="nav-link {% if 'tags' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}"
+		   href="{% url "task_manager:tag-list" %}">
+			<i class="material-symbols-rounded opacity-5">style</i>
+			<span class="nav-link-text ms-1">Tags</span>
+		</a>
+	</li>
+	<li class="nav-item">
+		<a class="nav-link {% if 'task types' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}"
+		   href="{% url "task_manager:task-type-list" %}">
+			<i class="material-symbols-rounded opacity-5">category</i>
+			<span class="nav-link-text ms-1">Task types</span>
+		</a>
+	</li>
+	<li class="nav-item">
+		<a class="nav-link {% if 'positions' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}"
+		   href="{% url "task_manager:position-list" %}">
+			<i class="material-symbols-rounded opacity-5">work</i>
+			<span class="nav-link-text ms-1">Positions</span>
+		</a>
+	</li>
+	<li class="nav-item">
+		<a class="nav-link {% if 'teams' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}"
+		   href="{% url "task_manager:team-list" %}">
+			<i class="material-symbols-rounded opacity-5">groups</i>
+			<span class="nav-link-text ms-1">Teams</span>
 		</a>
 	</li>
 </aside>
