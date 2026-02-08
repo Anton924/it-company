@@ -28,7 +28,7 @@
 		            <p class="font-weight-bold mb-0">Your tasks</p>
 		            {% for task in navigation_tasks %}
 			            <li class="mb-2">
-		                <a class="dropdown-item border-radius-md" href="{% url "task_manager:task-update" pk=task.pk %}"> {# link to the full task #}
+		                <a class="dropdown-item border-radius-md" href="{% url "task_manager:task-detail" pk=task.pk %}">
 		                  <div class="d-flex py-1">
 			                  <div class="my-auto">
 		                        <i class="material-symbols-rounded">fiber_manual_record</i>
