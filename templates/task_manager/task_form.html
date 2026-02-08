@@ -22,16 +22,22 @@
             {{ form|crispy }}
           </div>
 
-          <input type="hidden" name="next" value="{{ next }}">
+            <input type="hidden" name="next" value="{{ request.GET.next }}">
 
-          <div class="d-flex justify-content-end gap-2 border-top pt-3">
-            <a href="{% url "task_manager:task-list" %}" class="btn btn-outline-secondary">Cancel</a>
-            <button type="submit" class="btn btn-dark bg-gradient-dark px-4">
-              Save Changes
-            </button>
-          </div>
-        </form>
-      </div>
+            <div class="d-flex justify-content-end align-items-center gap-2 mt-4 pt-3 border-top">
+
+              <a href="{% if request.GET.next %}{{ request.GET.next }}{% else %}{% url "task_manager:task-list" %}{% endif %}" class="btn btn-light mb-0">
+                <i class="material-symbols-rounded text-sm me-1">close</i> Cancel
+              </a>
+
+              <button type="submit" class="btn bg-gradient-dark mb-0">
+                <i class="material-symbols-rounded text-sm me-1">save</i> Save Changes
+              </button>
+
+            </div>
+
+          </form>
+        </div>
 
     </div>
   </div>
