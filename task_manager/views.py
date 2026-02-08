@@ -3,10 +3,11 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models.aggregates import Count
 from django.http import HttpRequest
 from django.shortcuts import render
+from django.urls import reverse_lazy
 from django.views import generic
 
-
-from task_manager.models import Task, Project, Team
+from task_manager.forms import TaskForm, TeamForm
+from task_manager.models import Task, Project, Team, Tag, TaskType, Position, Worker
 
 
 def index(request: HttpRequest):
@@ -51,5 +52,296 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
         queryset = queryset.select_related("task_type", "project").prefetch_related("assignees", "tags")
+
+        return queryset
+
+
+class TaskUpdateView(LoginRequiredMixin, generic.UpdateView):
+    model = Task
+    form_class = TaskForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "task edit"
+
+        return context
+
+    def get_success_url(self):
+        next_url = self.request.POST.get("next")
+        if self.request.POST.get("next"):
+            return next_url
+        else:
+            return reverse_lazy("task_manager:task-list")
+
+
+
+
+class TaskDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Task
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "task in details"
+
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.select_related("project").prefetch_related("assignees","tags")
+
+        return queryset
+
+
+class TaskDeleteView(LoginRequiredMixin, generic.DeleteView):
+    model = Task
+    success_url = reverse_lazy("task_manager:task-list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context["segment"] = "delete task"
+
+        return context
+
+
+class TaskCreateView(LoginRequiredMixin, generic.CreateView):
+    model = Task
+    form_class = TaskForm
+    success_url = reverse_lazy("task_manager:task-list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "create task"
+
+        return context
+
+
+class TagListView(LoginRequiredMixin, generic.ListView):
+    model = Tag
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "tags"
+
+        return context
+
+
+class TagDeleteView(LoginRequiredMixin, generic.DeleteView):
+    model = Tag
+    success_url = reverse_lazy("task_manager:tag-list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "delete tag"
+
+        return context
+
+
+class TagUpdateView(LoginRequiredMixin, generic.UpdateView):
+    model = Tag
+    success_url = reverse_lazy("task_manager:tag-list")
+    fields = "__all__"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "edit tag"
+
+        return context
+
+
+class TagCreateView(LoginRequiredMixin, generic.CreateView):
+    model = Tag
+    success_url = reverse_lazy("task_manager:tag-list")
+    fields = "__all__"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "create task"
+
+        return context
+
+
+class TaskTypeListView(LoginRequiredMixin, generic.ListView):
+    model = TaskType
+    template_name = "task_manager/task_type_list.html"
+    context_object_name = "task_type_list"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "task types"
+
+        return context
+
+
+class TaskTypeDeleteView(LoginRequiredMixin, generic.DeleteView):
+    model = TaskType
+    template_name = "task_manager/task_type_confirm_delete.html"
+    context_object_name = "task_type"
+    success_url = reverse_lazy("task_manager:task-type-list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "delete task type"
+
+        return context
+
+
+class TaskTypeUpdateView(LoginRequiredMixin, generic.UpdateView):
+    model = TaskType
+    fields = "__all__"
+    template_name = "task_manager/task_type_form.html"
+    success_url = reverse_lazy("task_manager:task-type-list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "edit task type"
+
+        return context
+
+
+class TaskTypeCreateView(LoginRequiredMixin, generic.CreateView):
+    model = TaskType
+    fields = "__all__"
+    template_name = "task_manager/task_type_form.html"
+    success_url = reverse_lazy("task_manager:task-type-list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "create task type"
+
+        return context
+
+
+class PositionListView(LoginRequiredMixin, generic.ListView):
+    model = Position
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "positions"
+
+        return context
+
+
+class PositionUpdateView(LoginRequiredMixin, generic.UpdateView):
+    model = Position
+    fields = "__all__"
+    success_url = reverse_lazy("task_manager:position-list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "edit position"
+
+        return context
+
+
+class PositionDeleteView(LoginRequiredMixin, generic.DeleteView):
+    model = Position
+    success_url = reverse_lazy("task_manager:position-list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "delete position"
+
+        return context
+
+
+class PositionCreateView(LoginRequiredMixin, generic.CreateView):
+    model = Position
+    fields = "__all__"
+    success_url = reverse_lazy("task_manager:position-list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "create position"
+
+        return context
+
+
+class TeamListView(LoginRequiredMixin, generic.ListView):
+    model = Team
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "teams"
+
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+
+        queryset = queryset.select_related("team_lead").prefetch_related("workers", "projects")
+
+        return queryset
+
+class TeamUpdateView(LoginRequiredMixin, generic.UpdateView):
+    model = Team
+    form_class = TeamForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "edit team"
+
+        return context
+
+
+    def get_success_url(self):
+        next_url = self.request.GET.get("next", None)
+        if next_url:
+            return next_url
+        else:
+            return reverse_lazy("task_manager:team-list")
+
+
+class TeamDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Team
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "detail team"
+
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.select_related("team_lead").prefetch_related("workers", "projects")
+
+        return queryset
+
+
+class TeamDeleteView(LoginRequiredMixin, generic.DeleteView):
+    model = Team
+    success_url = reverse_lazy("task_manager:team-list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context["segment"] = "delete team"
+
+        return context
+
+
+
+class TeamCreateView(LoginRequiredMixin, generic.CreateView):
+    model = Team
+    form_class = TeamForm
+    success_url = reverse_lazy("task_manager:team-list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data()
+        context["segment"] = "create team"
+
+        return context
+
+
+class WorkerListView(LoginRequiredMixin, generic.ListView):
+    model = Worker
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "workers"
+
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.prefetch_related("teams_team_lead", "teams", "tasks").select_related("position")
 
         return queryset

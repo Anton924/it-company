@@ -1,89 +1,144 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block title %}
+  Tasks List
+{% endblock %}
+
 {% block content %}
+<div class="container-fluid py-4">
+	<div class="row">
+	  <div class="col-12">
+	    <div class="card my-4">
+	      <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+	        <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 d-flex align-items-center justify-content-between px-3">
+	          <h6 class="text-white text-capitalize mb-0 ps-2">
+	            <i class="material-symbols-rounded me-2">checklist</i>
+	            Tasks
+	          </h6>
+	          <a href="{% url 'task_manager:task-create' %}" class="btn btn-sm btn-white mb-0 text-dark">
+	            <i class="bi bi-plus-lg me-1"></i> Add Task
+	          </a>
+	        </div>
+	      </div>
 
-    <div class="container-fluid py-2">
-      <div class="row">
-        <div class="col-12">
-          <div class="card my-4">
-            <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-              <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
-                <h6 class="text-white text-capitalize ps-3">Tasks table</h6>
-              </div>
-            </div>
-            <div class="card-body px-0 pb-2">
-              <div class="table-responsive p-0">
-                <table class="table align-items-center mb-0">
-                  <thead>
-                    <tr>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Task</th>
-                      <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Description</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Deadline</th>
-                      <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Is completed</th>
-	                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Priority</th>
-	                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Task type</th>
-	                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Assignees</th>
-	                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tags</th>
-	                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Project</th>
-                      <th class="text-secondary opacity-7"></th>
-	                    <th class="text-secondary opacity-7"></th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {% for task in task_list %}
-	                    <tr>
-	                      <td>
-													<h6 class="mb-0 text-sm">{{ task.name }}</h6>
-	                      </td>
-	                      <td>
-		                      <p class="text-xs text-secondary mb-0">{{ task.description|truncatewords:3 }}</p>
-	                      </td>
-	                      <td class="align-middle text-center">
-                          <span class="text-secondary text-xs font-weight-bold">{{ task.deadline }}</span>
-	                      </td>
-	                      <td class="align-middle text-center">
-		                      <span class="text-secondary text-xs font-weight-bold">{{ task.is_completed|yesno|capfirst }}</span>
-	                      </td>
-	                      <td class="align-middle text-center">
-		                      {% if task.priority == "LOW" %}
-			                      <span class="badge badge-sm bg-gradient-info">Low</span>
-			                    {% elif task.priority == "MEDIUM" %}
-			                      <span class="badge badge-sm bg-gradient-success">Medium</span>
-			                    {% elif task.priority == "HIGH" %}
-			                      <span class="badge badge-sm bg-gradient-warning">High</span>
-			                    {% elif task.priority == "CRITICAL" %}
-			                      <span class="badge badge-sm bg-gradient-danger">Urgent</span>
-		                      {% endif %}
-	                      </td>
-	                      <td class="align-middle text-center">
-													<span class="text-secondary text-xs font-weight-bold">{{ task.task_type }}</span>
-	                      </td>
-	                      <td class="align-middle text-center">
-		                      <span class="text-secondary text-xs font-weight-bold">{{ task.assignees.all|join:", "|truncatewords:2 }}</span>
-	                      </td>
-	                      <td class="align-middle text-center">
-		                      <span class="text-secondary text-xs font-weight-bold">{{ task.tags.all|join:", "|truncatewords:2 }}</span>
-	                      </td>
-	                      <td class="align-middle text-center">
-		                      <span class="text-secondary text-xs font-weight-bold">{{ task.project }}</span>
-	                      </td>
-	                      <td class="align-middle">
-		                      <a href="#" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Edit task">Edit</a>
-	                      </td>
-	                      <td class="align-middle">
-		                      <a href="#" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip" data-original-title="Delete task">Delete</a>
-	                      </td>
-	                    </tr>
-                    {% endfor %}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {% include "includes/footer.html" %}
-    </div>
+	      <div class="card-body px-0 pb-2">
+	        <div class="table-responsive p-0">
+	          <table class="table align-items-center mb-0 table-hover">
+	            <thead>
+	              <tr>
+	                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-4">Task Name</th>
+	                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Status</th> <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Priority</th>
+	                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Deadline</th>
+	                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Type</th>
+	                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Assignees</th>
+	                <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tags</th> <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Actions</th>
+	              </tr>
+	            </thead>
+	            <tbody>
+	              {% for task in task_list %}
+	                <tr>
+	                  <td>
+	                    <div class="d-flex px-3 py-1">
+	                      <div class="d-flex flex-column justify-content-center">
+	                        <a href="{% url 'task_manager:task-detail' pk=task.pk %}" class="mb-0 text-sm font-weight-bold text-dark text-decoration-none">
+	                          {{ task.name }}<i class="material-symbols-rounded text-primary text-sm">open_in_new</i>
+	                        </a>
+	                        <p class="text-xs text-secondary mb-0">
+	                            {% if task.project %}
+	                                <span class="text-dark font-weight-bold">{{ task.project }}</span> |
+	                            {% endif %}
+	                            {{ task.description|truncatewords:5 }}
+	                        </p>
+	                      </div>
+	                    </div>
+	                  </td>
 
+	                  <td>
+	                    {% if task.is_completed %}
+	                        <span class="badge badge-sm bg-gradient-success">Completed</span>
+	                    {% else %}
+	                        <span class="badge badge-sm bg-gradient-secondary">In Progress</span>
+	                    {% endif %}
+	                  </td>
+
+	                  <td class="align-middle text-center text-sm">
+	                    {% if task.priority == "LOW" %}
+	                      <span class="badge badge-sm bg-gradient-info">Low</span>
+	                    {% elif task.priority == "MEDIUM" %}
+	                      <span class="badge badge-sm bg-gradient-primary">Medium</span>
+	                    {% elif task.priority == "HIGH" %}
+	                      <span class="badge badge-sm bg-gradient-warning">High</span>
+	                    {% elif task.priority == "CRITICAL" %}
+	                      <span class="badge badge-sm bg-gradient-danger">Critical</span>
+	                    {% else %}
+	                       <span class="badge badge-sm bg-gradient-secondary">{{ task.priority }}</span>
+	                    {% endif %}
+	                  </td>
+
+	                  <td class="align-middle text-center">
+	                    <span class="text-secondary text-xs font-weight-bold">
+	                        {{ task.deadline|date:"d M Y"|default:"-" }}
+	                    </span>
+	                  </td>
+
+	                  <td class="align-middle text-center">
+	                    <span class="text-secondary text-xs font-weight-bold">{{ task.task_type.name }}</span>
+	                  </td>
+
+	                  <td class="align-middle text-center">
+	                    <span class="text-secondary text-xs font-weight-bold">
+	                        {% for assignee in task.assignees.all|slice:":3" %}
+	                            {{ assignee.username }}{% if not forloop.last %}, {% endif %}
+	                        {% empty %}
+	                            -
+	                        {% endfor %}
+	                        {% if task.assignees.count > 3 %}...{% endif %}
+	                    </span>
+	                  </td>
+
+	                   <td class="align-middle text-center">
+	                      <div class="d-flex justify-content-center gap-1">
+	                        {% for tag in task.tags.all|slice:":2" %}
+	                            <span class="badge badge-sm border border-secondary text-secondary bg-transparent">{{ tag.name }}</span>
+	                        {% empty %}
+	                            <span class="text-xs text-secondary">-</span>
+	                        {% endfor %}
+	                      </div>
+	                  </td>
+
+	                  <td class="align-middle text-center">
+	                    <a href="{% url 'task_manager:task-update' pk=task.pk %}"
+	                       class="text-secondary font-weight-bold text-xs p-2"
+	                       data-bs-toggle="tooltip"
+	                       title="Edit Task">
+	                      <i class="material-symbols-rounded text-lg align-middle">edit</i>
+	                    </a>
+	                    <a href="{% url 'task_manager:task-delete' pk=task.pk %}"
+	                       class="text-danger font-weight-bold text-xs p-2"
+	                       data-bs-toggle="tooltip"
+	                       title="Delete Task">
+	                      <i class="material-symbols-rounded text-lg align-middle">delete</i>
+	                    </a>
+	                  </td>
+	                </tr>
+	              {% empty %}
+	                <tr>
+	                  <td colspan="8" class="text-center py-5">
+	                    <div class="d-flex flex-column align-items-center justify-content-center">
+	                      <i class="material-symbols-rounded text-secondary display-4 mb-3 opacity-5">checklist</i>
+	                      <h6 class="text-secondary">No tasks found</h6>
+	                      <p class="text-xs text-secondary">Start by creating a new task above.</p>
+	                    </div>
+	                  </td>
+	                </tr>
+	              {% endfor %}
+	            </tbody>
+	          </table>
+	        </div>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+</div>
 {% endblock content %}

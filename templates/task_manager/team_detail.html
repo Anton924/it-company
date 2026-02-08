@@ -1,0 +1,175 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+  Team: {{ team.name }}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+  <div class="row mb-4">
+    <div class="col-12">
+      <div class="card bg-gradient-dark shadow-dark border-radius-lg">
+        <div class="card-body p-4 d-flex align-items-center justify-content-between flex-wrap gap-3">
+
+          <div class="d-flex align-items-center">
+
+            <div class="text-white">
+              <h4 class="text-white mb-0">{{ team.name }}</h4>
+              <div class="d-flex align-items-center mt-1">
+                <span class="badge bg-white text-dark me-2">
+                  {{ team.workers.count }} members
+                </span>
+
+                <span class="text-sm opacity-8 d-flex align-items-center">
+                  <i class="material-symbols-rounded text-sm me-1">star</i>
+                  Lead:
+                  <span class="font-weight-bold ms-1">
+                    {{ team.team_lead|default:"No Team Lead assigned" }}
+                  </span>
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex gap-2">
+             <a href="{% url 'task_manager:team-update' pk=team.pk %}?next={{ request.path }}" class="btn btn-white text-dark mb-0 d-flex align-items-center">
+               <i class="material-symbols-rounded text-sm me-1">edit</i> Edit
+             </a>
+             <a href="{% url 'task_manager:team-delete' pk=team.pk %}?next={{ request.path }}" class="btn btn-outline-white mb-0 d-flex align-items-center">
+               <i class="material-symbols-rounded text-sm me-1">delete</i> Delete
+             </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+
+    <div class="col-12 col-lg-5 col-xl-4 mb-4">
+      <div class="card h-100">
+        <div class="card-header pb-0 p-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">
+              <i class="material-symbols-rounded text-secondary align-middle me-1">person</i>
+              Team Members
+            </h6>
+            <span class="badge bg-gradient-light text-dark">{{ team.workers.count }}</span>
+          </div>
+        </div>
+
+        <div class="card-body p-3 pb-0">
+          <ul class="list-group list-group-flush">
+            {% for worker in team.workers.all %}
+              <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
+
+                <div class="avatar me-3">
+                    <div class="w-100 h-100 rounded-circle bg-gradient-info d-flex align-items-center justify-content-center text-white font-weight-bold text-xs">
+                        {{ worker.first_name|first }}{{ worker.last_name|first }}
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-start flex-column justify-content-center">
+                  <h6 class="mb-0 text-sm">
+                    {{ worker.first_name }} {{ worker.last_name }}
+                  </h6>
+                  <p class="mb-0 text-xs text-secondary">@{{ worker.username }}</p>
+                </div>
+
+                <a href="#" class="btn btn-link pe-3 ps-0 mb-0 ms-auto text-dark" data-bs-toggle="tooltip" title="View Profile">
+                  <i class="material-symbols-rounded text-lg">chevron_right</i>
+                </a>
+              </li>
+            {% empty %}
+              <li class="list-group-item border-0 text-center py-4">
+                <i class="material-symbols-rounded text-secondary display-4 opacity-5">person_add</i>
+                <p class="text-sm text-secondary mt-2">No workers in this team yet.</p>
+                <a href="{% url 'task_manager:team-update' pk=team.pk %}" class="btn btn-sm btn-outline-dark mt-2">
+                  Add Members
+                </a>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-lg-7 col-xl-8 mb-4">
+      <div class="card h-100">
+        <div class="card-header pb-0 p-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <h6 class="mb-0">
+              <i class="material-symbols-rounded text-secondary align-middle me-1">rocket_launch</i>
+              Active Projects
+            </h6>
+             <span class="badge bg-gradient-success">{{ team.projects.count }}</span>
+          </div>
+        </div>
+
+        <div class="card-body p-3">
+            <div class="row">
+               {% for project in team.projects.all %}
+                <div class="col-md-6 mb-3">
+                    <div class="card card-body border p-3 shadow-none h-100 hover-shadow-sm transition-base">
+											<div class="d-flex align-items-center justify-content-between mb-2">
+											    <h6 class="mb-0 text-dark">{{ project.name }}</h6>
+
+											    {% if project.status == "IN_PROCESS" %}
+											      <span class="badge badge-sm bg-gradient-info">
+											        In Process
+											      </span>
+
+											    {% elif project.status == "DONE" %}
+											      <span class="badge badge-sm bg-gradient-success">
+											        Done
+											      </span>
+
+											    {% elif project.status == "PAUSED" %}
+											      <span class="badge badge-sm bg-gradient-warning">
+											        Paused
+											      </span>
+
+											    {% elif project.status == "CANCELED" %}
+											      <span class="badge badge-sm bg-gradient-danger">
+											        Canceled
+											      </span>
+
+											    {% else %}
+											      <span class="badge badge-sm bg-gradient-secondary">
+											        {{ project.status }}
+											      </span>
+											    {% endif %}
+											</div>
+                        <p class="text-sm text-secondary mb-3 text-truncate">
+                            {{ project.description|truncatechars:60|default:"No description provided."}}
+                        </p>
+                        <div class="d-flex align-items-center justify-content-between mt-auto">
+                            <div class="avatar-group">
+                                </div>
+                            <a href="#" class="text-primary text-xs font-weight-bold icon-move-right">
+                                View Project <i class="fas fa-arrow-right text-xs ms-1"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+               {% empty %}
+									<div class="col-12 text-center py-5">
+									   <i class="material-symbols-rounded text-secondary display-4 opacity-5">folder_open</i>
+									   <p class="text-sm text-secondary mt-2">No projects assigned to this team.</p>
+
+									   <a href="#" class="btn btn-sm btn-outline-dark mt-3 mb-0">
+									     <i class="material-symbols-rounded text-sm me-1">add</i> Create New Project
+									   </a>
+									</div>
+               {% endfor %}
+            </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

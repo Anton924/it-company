@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+  Teams List
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card my-4">
+
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 d-flex align-items-center justify-content-between px-3">
+            <h6 class="text-white text-capitalize mb-0 ps-2">
+              <i class="material-symbols-rounded me-2 align-middle">groups</i>
+              Teams
+            </h6>
+            <a href="{% url "task_manager:team-create" %}" class="btn btn-sm btn-white mb-0 text-dark">
+              <i class="material-symbols-rounded align-middle text-sm fw-bold me-1">add</i> Add Team
+            </a>
+          </div>
+        </div>
+
+        <div class="card-body px-0 pb-2">
+          <div class="table-responsive p-0">
+            <table class="table align-items-center mb-0 table-hover">
+              <thead>
+                <tr>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-4">Team</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Team Lead</th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Members</th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Active Projects</th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for team in team_list %}
+                  <tr>
+
+                    <td>
+                      <div class="d-flex px-3 py-1">
+
+                        <div class="d-flex flex-column justify-content-center">
+                          <a href="{% url "task_manager:team-detail" pk=team.pk %}" class="mb-0 text-sm font-weight-bold text-dark">
+                            {{ team.name }}<i class="material-symbols-rounded text-primary text-sm">open_in_new</i>
+                          </a>
+                        </div>
+                      </div>
+                    </td>
+
+                    <td>
+                      <div class="d-flex align-items-center">
+	                      <a href="#">
+		                      <i class="material-symbols-rounded text-warning text-sm me-1">star</i>
+                          <span class="text-dark text-xs font-weight-bold">
+                          {{ team.team_lead|default:"No leader" }}
+                        </span>
+	                      </a>
+                      </div>
+                    </td>
+
+                    <td class="align-middle text-center">
+                      <div class="avatar-group mt-2 justify-content-center">
+
+                        {% for worker in team.workers.all|slice:":4" %}
+                          <a href="javascript:;"
+                             class="avatar avatar-xs rounded-circle bg-gray-200 border border-white"
+                             data-bs-toggle="tooltip"
+                             data-bs-placement="bottom"
+                             title="{{ worker }}">
+                             <span class="text-xs text-secondary font-weight-bold">{{ worker.first_name|first|upper }}</span>
+                          </a>
+                        {% endfor %}
+
+                        {% if team.workers.count > 4 %}
+                          <a href="javascript:;" class="avatar avatar-xs rounded-circle bg-gradient-primary border border-white" data-bs-toggle="tooltip" title="and {{ team.workers.count|add:"-4" }} more">
+                            <span class="text-white text-xs">+{{ team.workers.count|add:"-4" }}</span>
+                          </a>
+                        {% endif %}
+
+                        {% if team.workers.count == 0 %}
+                           <span class="text-xs text-muted">No members</span>
+                        {% endif %}
+
+                      </div>
+                    </td>
+
+                    <td class="align-middle text-center">
+                       {% for project in team.projects.all|slice:":2" %}
+                          <span class="badge badge-sm bg-gradient-success variant-gradient">{{ project.name }}</span>
+                       {% empty %}
+                          <span class="text-secondary text-xs">No projects</span>
+                       {% endfor %}
+                       {% if team.projects.count > 2 %}
+                          <span class="text-secondary text-xs ms-1">...+{{ team.projects.count|add:"-2" }}</span>
+                       {% endif %}
+                    </td>
+
+                    <td class="align-middle text-center">
+                      <a href="{% url "task_manager:team-update" pk=team.pk %}"
+                         class="text-secondary font-weight-bold text-xs p-2"
+                         data-bs-toggle="tooltip"
+                         title="Edit Team">
+                        <i class="material-symbols-rounded text-lg align-middle">edit</i>
+                      </a>
+                      <a href="{% url "task_manager:team-delete" pk=team.pk %}"
+                         class="text-danger font-weight-bold text-xs p-2"
+                         data-bs-toggle="tooltip"
+                         title="Delete Team">
+                        <i class="material-symbols-rounded text-lg align-middle">delete</i>
+                      </a>
+                    </td>
+
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td colspan="5" class="text-center py-5">
+                      <div class="d-flex flex-column align-items-center justify-content-center">
+                        <div class="icon icon-lg icon-shape bg-gradient-light shadow-sm rounded-circle mb-3">
+                            <i class="material-symbols-rounded text-secondary opacity-10">groups</i>
+                        </div>
+                        <h6 class="text-secondary">No teams found</h6>
+                        <p class="text-xs text-secondary mb-0">Get started by creating a new team above.</p>
+                      </div>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
