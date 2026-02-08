@@ -2,25 +2,33 @@
 {% load static crispy_forms_filters %}
 
 {% block title %}
-	{{ object|yesno:"Update, Create" }} task
+  {{ object|yesno:"Update,Create" }} Task
 {% endblock %}
 
 {% block content %}
 
-<div class="container-fluid py-2">
-     <div class="row mt-5"> <div class="col-12">
-    <div class="card my-4 border-0 shadow"> <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
-        <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
-          <h6 class="text-white text-capitalize ps-3">Task {{ object|yesno:"update,create" }}</h6>
-        </div>
-      </div>
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-lg-8 col-md-10 mx-auto">
 
-      <div class="card-body p-4"> <form method="post">
-          {% csrf_token %}
+      <div class="card my-4">
 
-          <div class="mb-3">
-            {{ form|crispy }}
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 d-flex align-items-center px-3">
+            <i class="material-symbols-rounded text-white me-2">checklist</i>
+            <h6 class="text-white text-capitalize mb-0">
+              {{ object|yesno:"Update Existing,Create New" }} Task
+            </h6>
           </div>
+        </div>
+
+        <div class="card-body p-4">
+          <form method="post">
+            {% csrf_token %}
+
+            <div class="mb-4">
+              {{ form|crispy }}
+            </div>
 
             <input type="hidden" name="next" value="{{ request.GET.next }}">
 
@@ -39,6 +47,7 @@
           </form>
         </div>
 
+      </div>
     </div>
   </div>
 </div>
