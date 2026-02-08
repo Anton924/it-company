@@ -51,6 +51,7 @@ urlpatterns = [
     path("teams/<int:pk>/detail/", TeamDetailView.as_view(), name="team-detail"),
     path("teams/<int:pk>/delete/", TeamDeleteView.as_view(), name="team-delete"),
     path("teams/create/", TeamCreateView.as_view(), name="team-create"),
+    path("workers/", WorkerListView.as_view(), name="worker-list"),
 ]
 
 app_name = "task_manager"
