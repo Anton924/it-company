@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+  Task: {{ task.name }}
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card my-4">
+
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 d-flex align-items-center justify-content-between px-3">
+            <div class="d-flex align-items-center">
+                <i class="material-symbols-rounded text-white text-3xl me-3">task</i>
+                <h6 class="text-white text-capitalize mb-0">{{ task.name }}</h6>
+            </div>
+            <div>
+              <a href="{% url 'task_manager:task-update' pk=task.pk %}?next={{ request.path }}" class="btn btn-sm btn-white mb-0 text-dark">
+                <i class="material-symbols-rounded text-sm me-1">edit</i> Edit
+              </a>
+              <a href="{% url 'task_manager:task-delete' pk=task.pk %}?next={{ request.path }}" class="btn btn-sm btn-outline-white mb-0 ms-2">
+                <i class="material-symbols-rounded text-sm me-1">delete</i> Delete
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-body px-4 pb-4">
+
+          <div class="row mb-4">
+            <div class="col-12 d-flex align-items-center gap-2">
+                {% if task.is_completed %}
+                    <span class="badge badge-sm bg-gradient-success">Completed</span>
+                {% else %}
+                    <span class="badge badge-sm bg-gradient-warning">In Progress</span>
+                {% endif %}
+
+                {% if task.priority == 'CRITICAL' %}
+                    <span class="badge badge-sm bg-gradient-danger">{{ task.priority }}</span>
+                {% elif task.priority == 'HIGH' %}
+                    <span class="badge badge-sm bg-gradient-warning">{{ task.priority }}</span>
+                {% else %}
+                    <span class="badge badge-sm bg-gradient-info">{{ task.priority }}</span>
+                {% endif %}
+            </div>
+          </div>
+
+          <div class="row">
+
+            <div class="col-lg-8 col-md-12 mb-4">
+                <h6 class="mb-1 text-dark font-weight-bold">Description</h6>
+                <p class="text-sm text-secondary mb-4">
+                    {{ task.description|default:"No description provided."|linebreaks }}
+                </p>
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <h6 class="text-secondary text-xs font-weight-bolder opacity-7 text-uppercase ps-2">Deadline</h6>
+                        <div class="d-flex align-items-center p-2">
+                            <i class="material-symbols-rounded text-secondary me-2">calendar_today</i>
+                            <span class="text-dark text-sm font-weight-bold">{{ task.deadline|date:"d M Y" }}</span>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h6 class="text-secondary text-xs font-weight-bolder opacity-7 text-uppercase ps-2">Project</h6>
+                        <div class="d-flex align-items-center p-2">
+                            <i class="material-symbols-rounded text-secondary me-2">folder</i>
+                            {% if task.project %}
+                                <a href="#" class="text-primary text-sm font-weight-bold mb-0 icon-link icon-link-hover">
+                                    {{ task.project.name }}
+                                </a>
+                            {% else %}
+                                <span class="text-secondary text-sm">No Project</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4 col-md-12">
+
+                <div class="mb-4">
+                    <h6 class="text-secondary text-xs font-weight-bolder opacity-7 text-uppercase">Task Type</h6>
+                    <div class="d-flex align-items-center mt-1">
+                        <i class="material-symbols-rounded text-info me-2">category</i>
+                        <span class="text-dark text-sm font-weight-bold">{{ task.task_type }}</span>
+                    </div>
+                </div>
+
+                <hr class="horizontal dark my-3">
+
+                <div class="mb-4">
+    <h6 class="text-secondary text-xs font-weight-bolder opacity-7 text-uppercase mb-3">Assignees</h6>
+
+	    <div class="d-flex flex-column gap-2">
+	        {% for person in task.assignees.all %}
+	            <div class="d-flex align-items-center">
+	                <a href="#" class="avatar avatar-sm rounded-circle bg-gradient-dark me-2 d-flex align-items-center justify-content-center text-decoration-none">
+	                    <span class="text-white text-xs font-weight-bold">
+	                        {{ person.first_name|first }}{{ person.last_name|first }}
+	                    </span>
+	                </a>
+
+	                <div class="d-flex flex-column justify-content-center">
+	                    <a href="#" class="mb-0 text-sm text-dark font-weight-bold text-decoration-none">
+	                        {{ person.first_name }} {{ person.last_name }}
+	                    </a>
+	                </div>
+	            </div>
+	        {% empty %}
+	            <div class="d-flex align-items-center">
+	                 <div class="avatar avatar-sm rounded-circle bg-gray-200 me-2 d-flex align-items-center justify-content-center">
+	                    <i class="material-symbols-rounded text-secondary text-sm">person_off</i>
+	                 </div>
+	                 <span class="text-sm text-secondary fst-italic">Task unassigned</span>
+	            </div>
+	        {% endfor %}
+	    </div>
+	</div>
+                <div>
+                    <h6 class="text-secondary text-xs font-weight-bolder opacity-7 text-uppercase mb-2">Tags</h6>
+                    <div class="d-flex flex-wrap gap-1">
+                        {% for tag in task.tags.all %}
+                            <span class="badge badge-pill bg-gray-200 text-dark mb-1">{{ tag.name }}</span>
+                        {% empty %}
+                            <span class="text-sm text-secondary fst-italic">No tags</span>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
