@@ -52,7 +52,7 @@
 
                     <td>
                       <div class="d-flex align-items-center">
-	                      <a href="#">
+	                      <a href="{% url "task_manager:worker-detail" pk=team.team_lead.pk %}">
 		                      <i class="material-symbols-rounded text-warning text-sm me-1">star</i>
                           <span class="text-dark text-xs font-weight-bold">
                           {{ team.team_lead|default:"No leader" }}
@@ -65,7 +65,7 @@
                       <div class="avatar-group mt-2 justify-content-center">
 
                         {% for worker in team.workers.all|slice:":4" %}
-                          <a href="javascript:;"
+                          <a href="{% url "task_manager:worker-detail" pk=worker.pk %}"
                              class="avatar avatar-xs rounded-circle bg-gray-200 border border-white"
                              data-bs-toggle="tooltip"
                              data-bs-placement="bottom"
@@ -75,7 +75,7 @@
                         {% endfor %}
 
                         {% if team.workers.count > 4 %}
-                          <a href="javascript:;" class="avatar avatar-xs rounded-circle bg-gradient-primary border border-white" data-bs-toggle="tooltip" title="and {{ team.workers.count|add:"-4" }} more">
+                          <a href="{% url "task_manager:team-detail" pk=team.pk %}" class="avatar avatar-xs rounded-circle bg-gradient-primary border border-white" data-bs-toggle="tooltip" title="and {{ team.workers.count|add:"-4" }} more">
                             <span class="text-white text-xs">+{{ team.workers.count|add:"-4" }}</span>
                           </a>
                         {% endif %}
