@@ -12,12 +12,10 @@ from task_manager.models import Task, Project, Team, Tag, TaskType, Position, Wo
 
 def index(request: HttpRequest):
     total_tasks_in_process = Task.objects.filter(is_completed=False).count()
-    total_projects = Project.objects.count()
+    total_projects = Project.objects.filter(status="IN_PROCESS").count()
     total_workers = get_user_model().objects.count()
     total_teams = Team.objects.count()
-    tasks = None
-    if request.user.is_authenticated:
-        tasks = Task.objects.filter(is_completed=False, assignees=request.user).order_by("deadline")[:10]
+    teams =  Team.objects.prefetch_related("workers")
     visit_times = request.session.get("visit_times", 0) + 1
     request.session["visit_times"] = visit_times
 
@@ -30,9 +28,9 @@ def index(request: HttpRequest):
         "projects": Project.objects.annotate(
             total_tasks=Count("tasks", distinct=True),
             total_teams=Count("teams", distinct=True)
-        ),
-        "tasks": tasks,
-        "visit_times": visit_times
+        ).filter(status="IN_PROCESS"),
+        "visit_times": visit_times,
+        "teams": teams
     }
 
     return render(request, template_name="task_manager/index.html", context=context)
