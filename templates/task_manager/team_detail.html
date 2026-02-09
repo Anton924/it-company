@@ -79,7 +79,7 @@
                   <p class="mb-0 text-xs text-secondary">@{{ worker.username }}</p>
                 </div>
 
-                <a href="#" class="btn btn-link pe-3 ps-0 mb-0 ms-auto text-dark" data-bs-toggle="tooltip" title="View Profile">
+                <a href="{% url "task_manager:worker-detail" pk=worker.pk %}" class="btn btn-link pe-3 ps-0 mb-0 ms-auto text-dark" data-bs-toggle="tooltip" title="View Profile">
                   <i class="material-symbols-rounded text-lg">chevron_right</i>
                 </a>
               </li>
