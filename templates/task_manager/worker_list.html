@@ -1,0 +1,156 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+  Workers List
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+  <div class="row">
+    <div class="col-12">
+      <div class="card my-4">
+
+        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+          <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3 d-flex align-items-center justify-content-between px-3">
+            <h6 class="text-white text-capitalize mb-0 ps-2">
+              <i class="material-symbols-rounded me-2 align-middle">badge</i>
+              Workers
+            </h6>
+            <a href="#" class="btn btn-sm btn-white mb-0 text-dark">
+              <i class="material-symbols-rounded align-middle text-sm fw-bold me-1">add</i> Add Worker
+            </a>
+          </div>
+        </div>
+
+        <div class="card-body px-0 pb-2">
+          <div class="table-responsive p-0">
+            <table class="table align-items-center mb-0 table-hover">
+              <thead>
+                <tr>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-4">Employee</th>
+                  <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Position</th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Team Lead In</th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Member Of</th>
+                  <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Tasks</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for worker in worker_list %}
+                  <tr>
+
+                    <td>
+                      <div class="d-flex px-3 py-1 align-items-center">
+
+                        <div class="me-3">
+                             <div class="avatar avatar-sm rounded-circle bg-gradient-info d-flex align-items-center justify-content-center shadow-sm">
+                                <span class="text-white text-xs font-weight-bold">
+                                    {{ worker.first_name|first|upper|default:worker.username|first|upper }}{{ worker.last_name|first|upper }}
+                                </span>
+                             </div>
+                        </div>
+
+                        <div class="d-flex flex-column justify-content-center">
+                          <a href="{% url "task_manager:worker-detail" pk=worker.pk %}" class="mb-0 text-sm font-weight-bold text-dark text-decoration-none">
+                              {% if worker.first_name %}
+                                {{ worker.first_name }} {{ worker.last_name }}
+                              {% else %}
+                                {{ worker.username }}
+                              {% endif %}
+                              {% if request.user == worker%}
+	                              (Me)
+                              {% endif %}
+                          </a>
+                          <p class="text-xs text-secondary mb-0">{{ worker.email|default:"No email" }}</p>
+                        </div>
+
+                        <a href="{% url "task_manager:worker-detail" pk=worker.pk %}"
+                           class="btn btn-link text-secondary font-weight-bold text-xs p-0 mb-0 ms-3"
+                           data-bs-toggle="tooltip"
+                           title="View Profile">
+                          <i class="material-symbols-rounded text-lg align-middle">chevron_right</i>
+                        </a>
+
+                      </div>
+                    </td>
+
+                    <td>
+                      <p class="text-xs font-weight-bold mb-0 text-dark">
+                          {{ worker.position.name|default:"Not assigned" }}
+                      </p>
+                      <p class="text-xs text-secondary mb-0">@{{ worker.username }}</p>
+                    </td>
+
+                    <td class="align-middle text-center">
+                        {% for team in worker.teams_team_lead.all|slice:":2" %}
+	                        <a href="{% url "task_manager:team-detail" pk=team.pk %}"><span class="badge badge-sm bg-gradient-warning mb-1">{{ team.name }}</span></a>
+                        {% empty %}
+                            <span class="text-secondary text-xs">-</span>
+                        {% endfor %}
+
+                        {% if worker.teams_team_lead.count > 2 %}
+												  <a href="{% url "task_manager:worker-detail" pk=worker.pk %}"
+												     class="text-decoration-none d-inline-block align-middle ms-1"
+												     data-bs-toggle="tooltip"
+												     data-bs-placement="top"
+												     title="View all {{ worker.teams_team_lead.count }} teams">
+
+												    <span class="badge badge-sm bg-gray-200 text-secondary border border-white hover-shadow-sm transition-base">
+												       +{{ worker.teams_team_lead.count|add:"-2" }}
+												    </span>
+
+												  </a>
+												{% endif %}
+                    </td>
+
+                    <td class="align-middle text-center">
+                         {% for team in worker.teams.all|slice:":2" %}
+	                         <a href="{% url "task_manager:team-detail" pk=team.pk %}"><span class="badge badge-sm bg-gradient-faded-info text-dark mb-1">{{ team.name }}</span></a>
+                        {% empty %}
+                            <span class="text-secondary text-xs">No teams</span>
+                        {% endfor %}
+
+                        {% if worker.teams_team_lead.count > 2 %}
+												  <a href="{% url "task_manager:worker-detail" pk=worker.pk %}"
+												     class="text-decoration-none d-inline-block align-middle ms-1"
+												     data-bs-toggle="tooltip"
+												     data-bs-placement="top"
+												     title="View all {{ worker.teams_team_lead.count }} teams">
+
+												    <span class="badge badge-sm bg-gray-200 text-secondary border border-white hover-shadow-sm transition-base">
+												       +{{ worker.teams_team_lead.count|add:"-2" }}
+												    </span>
+
+												  </a>
+												{% endif %}
+                    </td>
+
+                    <td class="align-middle text-center">
+                      <span class="text-secondary text-xs font-weight-bold">
+                          {{ worker.tasks.count }}
+                      </span>
+                    </td>
+
+                  </tr>
+                {% empty %}
+                  <tr>
+                    <td colspan="5" class="text-center py-5">
+                      <div class="d-flex flex-column align-items-center justify-content-center">
+                        <div class="icon icon-lg icon-shape bg-gradient-light shadow-sm rounded-circle mb-3">
+                            <i class="material-symbols-rounded text-secondary opacity-10">badge</i>
+                        </div>
+                        <h6 class="text-secondary">No workers found</h6>
+                        <p class="text-xs text-secondary mb-0">Get started by adding a new worker above.</p>
+                      </div>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
