@@ -345,3 +345,21 @@ class WorkerListView(LoginRequiredMixin, generic.ListView):
         queryset = queryset.prefetch_related("teams_team_lead", "teams", "tasks").select_related("position")
 
         return queryset
+
+
+class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Worker
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "worker details"
+        context["undone_tasks"] = Task.objects.filter(is_completed=False, assignees=self.request.user).order_by("deadline")
+        context["done_tasks"] = Task.objects.filter(is_completed=True, assignees=self.request.user).order_by("deadline")
+
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset() # add prefetches
+
+
+        return queryset
