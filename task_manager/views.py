@@ -448,3 +448,21 @@ class ProjectDetailView(LoginRequiredMixin, generic.DetailView):
 
         return queryset
 
+
+class ProjectUpdateView(LoginRequiredMixin, generic.UpdateView):
+    model = Project
+    form_class = ProjectForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "update project"
+
+        return context
+
+    def get_success_url(self):
+        next_url = self.request.GET.get("next", None)
+        if next_url:
+            return next_url
+        return reverse_lazy("task_manager:project-list")
+
+
