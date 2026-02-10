@@ -358,6 +358,12 @@ class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
 
     def get_queryset(self):
         queryset = super().get_queryset() # add prefetches
+        queryset = super().get_queryset()
+        queryset = queryset.prefetch_related("teams__workers", "teams__team_lead").select_related("position")
+
+        return queryset
+
+
 
 
         return queryset
