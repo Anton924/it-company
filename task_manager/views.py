@@ -391,5 +391,15 @@ class WorkerUpdateView(LoginRequiredMixin, generic.UpdateView):
         return reverse_lazy("task_manager:worker-list")
 
 
+class WorkerDeleteView(LoginRequiredMixin, generic.DeleteView):
+    model = Worker
+    success_url = reverse_lazy("task_manager:worker-list")
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "delete worker"
+
+        return context
 
         return queryset
