@@ -77,4 +77,11 @@
 			<span class="nav-link-text ms-1">Workers</span>
 		</a>
 	</li>
+	<li class="nav-item">
+		<a class="nav-link {% if 'projects' == segment %} active bg-gradient-dark text-white {% else %} text-dark {% endif %}"
+		   href="{% url "task_manager:project-list" %}">
+			<i class="material-symbols-rounded opacity-5">rocket_launch</i>
+			<span class="nav-link-text ms-1">Projects</span>
+		</a>
+	</li>
 </aside>
