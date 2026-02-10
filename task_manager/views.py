@@ -357,12 +357,21 @@ class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
         return context
 
     def get_queryset(self):
-        queryset = super().get_queryset() # add prefetches
         queryset = super().get_queryset()
         queryset = queryset.prefetch_related("teams__workers", "teams__team_lead").select_related("position")
 
         return queryset
 
+
+class WorkerCreateView(LoginRequiredMixin, generic.CreateView):
+    model = Worker
+    form_class = WorkerCreationForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "create worker"
+
+        return context
 
 
 
