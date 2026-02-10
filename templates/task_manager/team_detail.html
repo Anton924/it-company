@@ -16,7 +16,7 @@
           <div class="d-flex align-items-center">
 
             <div class="text-white">
-              <h4 class="text-white mb-0">{{ team.name }}</h4>
+              <h4 class="text-white mb-0"><i class="material-symbols-rounded me-2 align-middle">groups</i>{{ team.name }}</h4>
               <div class="d-flex align-items-center mt-1">
                 <span class="badge bg-white text-dark me-2">
                   {{ team.workers.count }} members
@@ -79,7 +79,7 @@
                   <p class="mb-0 text-xs text-secondary">@{{ worker.username }}</p>
                 </div>
 
-                <a href="#" class="btn btn-link pe-3 ps-0 mb-0 ms-auto text-dark" data-bs-toggle="tooltip" title="View Profile">
+                <a href="{% url "task_manager:worker-detail" pk=worker.pk %}" class="btn btn-link pe-3 ps-0 mb-0 ms-auto text-dark" data-bs-toggle="tooltip" title="View Profile">
                   <i class="material-symbols-rounded text-lg">chevron_right</i>
                 </a>
               </li>

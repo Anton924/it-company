@@ -6,18 +6,30 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import generic
 
-from task_manager.forms import TaskForm, TeamForm
-from task_manager.models import Task, Project, Team, Tag, TaskType, Position, Worker
+from task_manager.forms import (
+    TaskForm,
+    TeamForm,
+    WorkerCreationForm,
+    WorkerUpdateForm,
+    ProjectForm
+)
+from task_manager.models import (
+    Task,
+    Project,
+    Team,
+    Tag,
+    TaskType,
+    Position,
+    Worker
+)
 
 
 def index(request: HttpRequest):
     total_tasks_in_process = Task.objects.filter(is_completed=False).count()
-    total_projects = Project.objects.count()
+    total_projects = Project.objects.filter(status="IN_PROCESS").count()
     total_workers = get_user_model().objects.count()
     total_teams = Team.objects.count()
-    tasks = None
-    if request.user.is_authenticated:
-        tasks = Task.objects.filter(is_completed=False, assignees=request.user).order_by("deadline")[:10]
+    teams =  Team.objects.prefetch_related("workers")
     visit_times = request.session.get("visit_times", 0) + 1
     request.session["visit_times"] = visit_times
 
@@ -30,9 +42,9 @@ def index(request: HttpRequest):
         "projects": Project.objects.annotate(
             total_tasks=Count("tasks", distinct=True),
             total_teams=Count("teams", distinct=True)
-        ),
-        "tasks": tasks,
-        "visit_times": visit_times
+        ).filter(status="IN_PROCESS"),
+        "visit_times": visit_times,
+        "teams": teams
     }
 
     return render(request, template_name="task_manager/index.html", context=context)
@@ -345,3 +357,133 @@ class WorkerListView(LoginRequiredMixin, generic.ListView):
         queryset = queryset.prefetch_related("teams_team_lead", "teams", "tasks").select_related("position")
 
         return queryset
+
+
+class WorkerDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Worker
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "worker details"
+        context["undone_tasks"] = Task.objects.filter(is_completed=False, assignees=self.request.user).order_by("deadline")
+        context["done_tasks"] = Task.objects.filter(is_completed=True, assignees=self.request.user).order_by("deadline")
+
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.prefetch_related("teams__workers", "teams__team_lead").select_related("position")
+
+        return queryset
+
+
+class WorkerCreateView(LoginRequiredMixin, generic.CreateView):
+    model = Worker
+    form_class = WorkerCreationForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "create worker"
+
+        return context
+
+
+class WorkerUpdateView(LoginRequiredMixin, generic.UpdateView):
+    model = Worker
+    form_class = WorkerUpdateForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "update worker"
+
+        return context
+
+    def get_success_url(self):
+        next_url = self.request.GET.get("next", None)
+        if next_url:
+            return next_url
+        return reverse_lazy("task_manager:worker-list")
+
+
+class WorkerDeleteView(LoginRequiredMixin, generic.DeleteView):
+    model = Worker
+    success_url = reverse_lazy("task_manager:worker-list")
+
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "delete worker"
+
+        return context
+
+
+class ProjectListView(LoginRequiredMixin, generic.ListView):
+    model = Project
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "projects"
+
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.prefetch_related("teams", "tasks")
+
+        return queryset
+
+
+class ProjectDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Project
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "detail project"
+
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.prefetch_related("tasks", "teams", "teams__team_lead", "teams__workers")
+
+        return queryset
+
+
+class ProjectUpdateView(LoginRequiredMixin, generic.UpdateView):
+    model = Project
+    form_class = ProjectForm
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "update project"
+
+        return context
+
+    def get_success_url(self):
+        next_url = self.request.GET.get("next", None)
+        if next_url:
+            return next_url
+        return reverse_lazy("task_manager:project-list")
+
+
+
+class ProjectCreateView(LoginRequiredMixin, generic.CreateView):
+    model = Project
+    form_class = ProjectForm
+    success_url = reverse_lazy("task_manager:project-list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "create project"
+
+        return context
+
+
+class ProjectDeleteView(LoginRequiredMixin, generic.DeleteView):
+    model = Project
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "delete project"
+
+        return context

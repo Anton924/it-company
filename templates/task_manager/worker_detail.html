@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+  Worker: {{ worker }}
+{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-4">
+
+  <div class="card card-body mx-3 mx-md-4 mt-4">
+
+    <div class="row gx-4 align-items-center">
+
+      <div class="col-auto">
+        <div class="avatar avatar-xl position-relative bg-gradient-info rounded-circle shadow-sm d-flex align-items-center justify-content-center">
+            <span class="text-white text-lg font-weight-bold">
+              {{ worker.first_name|first|upper|default:worker.username|first|upper }}{{ worker.last_name|first|upper }}
+            </span>
+        </div>
+      </div>
+
+      <div class="col-auto my-auto">
+        <div class="h-100">
+          <h5 class="mb-1 text-dark">
+            {% if worker.first_name %}
+                {{ worker.first_name }} {{ worker.last_name }}
+            {% else %}
+                {{ worker.username }}
+            {% endif %}
+            {% if request.user == worker %}
+              (Me)
+            {% endif %}
+          </h5>
+          <p class="mb-0 font-weight-normal text-sm text-secondary">
+            {{ worker.position.name|default:"Position not assigned" }}
+            <span class="mx-2 text-secondary opacity-5">|</span>
+            {{ worker.email|default:"No email" }}
+          </p>
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3 text-sm-end">
+
+        <a href="{% url "task_manager:worker-update" pk=worker.pk %}?next={{ request.path }}" class="btn btn-sm btn-outline-dark mb-0">
+            <i class="material-symbols-rounded text-sm me-1">edit</i> Edit
+        </a>
+        <a href="{% url "task_manager:worker-delete" pk=worker.pk %}?next={{ request.path }}" class="btn btn-sm btn-outline-danger mb-0 ms-2">
+            <i class="material-symbols-rounded text-sm me-1">delete</i>
+        </a>
+
+      </div>
+
+    </div>
+  </div>
+
+  <div class="row mt-4">
+
+    <div class="col-12 col-xl-4 mb-4">
+
+      <div class="card h-auto mb-4">
+        <div class="card-header pb-0 p-3">
+          <h6 class="mb-0">
+            <i class="material-symbols-rounded text-secondary text-sm me-1 align-middle">person</i>
+            Details
+          </h6>
+        </div>
+        <div class="card-body p-3">
+          <ul class="list-group">
+            <li class="list-group-item border-0 ps-0 pt-0 text-sm">
+                <strong class="text-dark">Username:</strong> &nbsp; @{{ worker.username }}
+            </li>
+            <li class="list-group-item border-0 ps-0 text-sm">
+                <strong class="text-dark">Joined:</strong> &nbsp; {{ worker.date_joined|date:"d M Y" }}
+            </li>
+             <li class="list-group-item border-0 ps-0 text-sm">
+                <strong class="text-dark">Last Login:</strong> &nbsp; {{ worker.last_login|date:"d M Y, H:i"|default:"Never" }}
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card h-auto">
+        <div class="card-header pb-0 p-3">
+          <h6 class="mb-0">
+             <i class="material-symbols-rounded text-secondary text-sm me-1 align-middle">groups</i>
+             Teams
+          </h6>
+        </div>
+        <div class="card-body p-3">
+          <ul class="list-group">
+            {% for team in worker.teams.all %}
+              <li class="list-group-item border-0 d-flex align-items-center px-0 mb-2">
+
+                <div class="d-flex align-items-start flex-column justify-content-center">
+                  <h6 class="mb-0 text-sm">{{ team.name }}</h6>
+                  <p class="mb-0 text-xs text-secondary">{{ team.workers.count }} members</p>
+                </div>
+
+                <div class="ms-auto text-end">
+                    {% if team.team_lead.pk == worker.pk %}
+                        <span class="badge badge-sm bg-gradient-warning mb-1">Team Lead</span>
+                    {% else %}
+                        <span class="badge badge-sm bg-gradient-faded-info text-dark mb-1">Member</span>
+                    {% endif %}
+
+                    <div class="mt-1">
+                        <a href="{% url 'task_manager:team-detail' pk=team.pk %}" class="text-secondary text-xs font-weight-bold">
+                            View <i class="material-symbols-rounded text-sm align-middle">arrow_forward</i>
+                        </a>
+                    </div>
+                </div>
+              </li>
+            {% empty %}
+               <li class="list-group-item border-0 text-center text-sm text-secondary py-3">
+                  <i class="material-symbols-rounded text-lg d-block mb-1 opacity-5">group_off</i>
+                  Not a member of any team.
+               </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 col-xl-8">
+
+        <div class="row mb-4">
+            <div class="col-6">
+                <div class="card h-100">
+                    <div class="card-body p-3 text-center">
+                        <p class="text-sm mb-0 text-capitalize font-weight-bold">Pending Tasks</p>
+                        <h4 class="font-weight-bolder mb-0 text-danger">
+                            {{ undone_tasks.count }}
+                        </h4>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                 <div class="card h-100">
+                    <div class="card-body p-3 text-center">
+                        <p class="text-sm mb-0 text-capitalize font-weight-bold">Completed Tasks</p>
+                        <h4 class="font-weight-bolder mb-0 text-success">
+                            {{ done_tasks.count }}
+                        </h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header pb-0 px-3">
+                <h6 class="mb-0 text-danger">
+                    <i class="material-symbols-rounded text-sm me-1 align-middle">pending_actions</i>
+                    Active Tasks
+                </h6>
+            </div>
+            <div class="card-body pt-4 p-3">
+                <ul class="list-group">
+                    {% for task in undone_tasks %}
+                    <li class="list-group-item border-0 d-flex flex-column flex-md-row p-4 mb-2 bg-gray-100 border-radius-lg align-items-md-center">
+
+                        <div class="d-flex flex-column mb-2 mb-md-0">
+                            <h6 class="mb-1 text-sm text-dark">{{ task.name }}</h6>
+                            <span class="text-xs">Deadline: <span class="text-dark font-weight-bold ms-1">{{ task.deadline|date:"d M Y" }}</span></span>
+                            <span class="text-xs">Type: <span class="text-dark ms-1 font-weight-bold">{{ task.task_type.name }}</span></span>
+                        </div>
+
+                        <div class="ms-md-auto text-md-end d-flex align-items-center justify-content-between justify-content-md-end mt-2 mt-md-0 gap-2">
+                            <span class="badge badge-sm bg-gradient-danger me-2">{{ task.priority }} priority</span>
+
+                            <a class="btn btn-link text-dark px-3 mb-0" href="{% url 'task_manager:task-detail' pk=task.pk %}">
+                                <i class="material-symbols-rounded text-sm me-1">visibility</i> View
+                            </a>
+                        </div>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item border-0 text-center py-5">
+                         <i class="material-symbols-rounded text-success display-4 opacity-5">check_circle</i>
+                         <p class="text-sm mt-2 text-secondary">All tasks completed! Great job.</p>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="card">
+             <div class="card-header pb-0 px-3">
+                <h6 class="mb-0 text-success">
+                    <i class="material-symbols-rounded text-sm me-1 align-middle">task_alt</i>
+                    Completed History
+                </h6>
+            </div>
+            <div class="card-body pt-4 p-3">
+                <ul class="list-group">
+                    {% for task in done_tasks %}
+                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg align-items-center">
+                            <div class="d-flex align-items-center">
+                                <div class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-3 btn-sm d-flex align-items-center justify-content-center">
+                                    <i class="material-symbols-rounded text-sm">done</i>
+                                </div>
+                                <div class="d-flex flex-column">
+                                    <h6 class="mb-1 text-dark text-sm">{{ task.name }}</h6>
+                                    <span class="text-xs d-none d-sm-block">Deadline was: {{ task.deadline|date:"d M Y" }}</span>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center text-success text-gradient text-sm font-weight-bold">
+                                Done
+                                <a href="{% url 'task_manager:task-detail' pk=task.pk %}" class="btn btn-link text-secondary mb-0 ms-2" data-bs-toggle="tooltip" title="View Details">
+                                    <i class="material-symbols-rounded text-lg">chevron_right</i>
+                                </a>
+                            </div>
+                        </li>
+                    {% empty %}
+                        <li class="text-center text-sm text-secondary py-3">
+                            No completed tasks yet.
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+    </div>
+  </div>
+</div>
+{% endblock content %}
