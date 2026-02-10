@@ -6,8 +6,22 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import generic
 
-from task_manager.forms import TaskForm, TeamForm
-from task_manager.models import Task, Project, Team, Tag, TaskType, Position, Worker
+from task_manager.forms import (
+    TaskForm,
+    TeamForm,
+    WorkerCreationForm,
+    WorkerUpdateForm,
+    ProjectForm
+)
+from task_manager.models import (
+    Task,
+    Project,
+    Team,
+    Tag,
+    TaskType,
+    Position,
+    Worker
+)
 
 
 def index(request: HttpRequest):
@@ -401,5 +415,19 @@ class WorkerDeleteView(LoginRequiredMixin, generic.DeleteView):
         context["segment"] = "delete worker"
 
         return context
+
+
+class ProjectListView(LoginRequiredMixin, generic.ListView):
+    model = Project
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "projects"
+
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.prefetch_related("teams", "tasks")
 
         return queryset
