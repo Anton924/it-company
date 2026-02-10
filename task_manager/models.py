@@ -51,6 +51,9 @@ class Team(models.Model):
     )
     workers = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="teams")
 
+    def __str__(self):
+        return self.name
+
 
 class Project(models.Model):
     STATUS_CHOICES = (
