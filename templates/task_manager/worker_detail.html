@@ -2,7 +2,7 @@
 {% load static %}
 
 {% block title %}
-  Worker Profile: {{ worker.username }}
+  Worker: {{ worker }}
 {% endblock %}
 
 {% block content %}
@@ -42,10 +42,10 @@
 
       <div class="col-lg-4 col-md-6 my-sm-auto ms-sm-auto me-sm-0 mx-auto mt-3 text-sm-end">
 
-        <a href="" class="btn btn-sm btn-outline-dark mb-0">
+        <a href="{% url "task_manager:worker-update" pk=worker.pk %}?next={{ request.path }}" class="btn btn-sm btn-outline-dark mb-0">
             <i class="material-symbols-rounded text-sm me-1">edit</i> Edit
         </a>
-        <a href="" class="btn btn-sm btn-outline-danger mb-0 ms-2">
+        <a href="{% url "task_manager:worker-delete" pk=worker.pk %}?next={{ request.path }}" class="btn btn-sm btn-outline-danger mb-0 ms-2">
             <i class="material-symbols-rounded text-sm me-1">delete</i>
         </a>
 
@@ -98,7 +98,7 @@
                 </div>
 
                 <div class="ms-auto text-end">
-                    {% if team.team_lead == worker %}
+                    {% if team.team_lead.pk == worker.pk %}
                         <span class="badge badge-sm bg-gradient-warning mb-1">Team Lead</span>
                     {% else %}
                         <span class="badge badge-sm bg-gradient-faded-info text-dark mb-1">Member</span>
