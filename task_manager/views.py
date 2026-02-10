@@ -466,3 +466,15 @@ class ProjectUpdateView(LoginRequiredMixin, generic.UpdateView):
         return reverse_lazy("task_manager:project-list")
 
 
+
+class ProjectCreateView(LoginRequiredMixin, generic.CreateView):
+    model = Project
+    form_class = ProjectForm
+    success_url = reverse_lazy("task_manager:project-list")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "create project"
+
+        return context
+
