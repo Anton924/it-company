@@ -431,3 +431,20 @@ class ProjectListView(LoginRequiredMixin, generic.ListView):
         queryset = queryset.prefetch_related("teams", "tasks")
 
         return queryset
+
+
+class ProjectDetailView(LoginRequiredMixin, generic.DetailView):
+    model = Project
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "detail project"
+
+        return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.prefetch_related("tasks", "teams", "teams__team_lead", "teams__workers")
+
+        return queryset
+
