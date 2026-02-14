@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.forms.widgets import CheckboxSelectMultiple
+from django.forms.widgets import CheckboxSelectMultiple, TextInput
 
 from task_manager.models import Task, Team, Worker, Project
 
@@ -73,3 +73,30 @@ class ProjectForm(forms.ModelForm):
         widgets = {
             "teams": CheckboxSelectMultiple
         }
+
+
+class TaskSearchField(forms.Form):
+    name = forms.CharField(
+        max_length=255,
+        required=False,
+        label="",
+        widget= forms.TextInput(
+            attrs={
+                "placeholder": "Enter the name of the task...",
+                "class": "form-control-sm"
+            }
+        )
+    )
+
+
+class TagSearchField(forms.Form):
+    name = forms.CharField(
+        max_length=255,
+        required=False,
+        label="",
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Enter name of the tag..."
+            }
+        )
+    )
