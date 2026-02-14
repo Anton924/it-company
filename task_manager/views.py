@@ -11,7 +11,9 @@ from task_manager.forms import (
     TeamForm,
     WorkerCreationForm,
     WorkerUpdateForm,
-    ProjectForm
+    ProjectForm,
+    TaskSearchField,
+    TagSearchField
 )
 from task_manager.models import (
     Task,
@@ -57,13 +59,19 @@ class TaskListView(LoginRequiredMixin, generic.ListView):
         self, *, object_list = ..., **kwargs
     ):
         context = super().get_context_data(**kwargs)
+        name = self.request.GET.get("name")
         context["segment"] = "tasks"
+        context["search_field"] = TaskSearchField(
+            initial={"name": name}
+        )
 
         return context
 
     def get_queryset(self):
-        queryset = super().get_queryset()
-        queryset = queryset.select_related("task_type", "project").prefetch_related("assignees", "tags")
+        queryset = Task.objects.select_related("task_type", "project").prefetch_related("assignees", "tags")
+        form = TaskSearchField(self.request.GET)
+        if form.is_valid():
+            queryset = queryset.filter(name__icontains=form.cleaned_data["name"])
 
         return queryset
 
@@ -84,8 +92,6 @@ class TaskUpdateView(LoginRequiredMixin, generic.UpdateView):
             return next_url
         else:
             return reverse_lazy("task_manager:task-list")
-
-
 
 
 class TaskDetailView(LoginRequiredMixin, generic.DetailView):
@@ -132,9 +138,21 @@ class TagListView(LoginRequiredMixin, generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        name = self.request.GET.get("name", None)
         context["segment"] = "tags"
+        context["search_field"] = TagSearchField(
+            initial={"name": name}
+        )
 
         return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        form = TagSearchField(self.request.GET)
+        if form.is_valid():
+            queryset = queryset.filter(name__icontains=form.cleaned_data["name"])
+
+        return queryset
 
 
 class TagDeleteView(LoginRequiredMixin, generic.DeleteView):
