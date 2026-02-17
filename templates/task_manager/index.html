@@ -187,10 +187,12 @@
 							<td class="align-middle text-center">
 							    {% if team.team_lead %}
 							    <div class="d-flex align-items-center justify-content-center">
-							        <div class="avatar avatar-xs rounded-circle bg-gradient-info me-2" data-bs-toggle="tooltip" title="{{ team.team_lead.first_name|upper }} {{ team.team_lead.last_name|upper }}">
-							            <span class="text-white text-xxs">{{ team.team_lead.first_name|first|upper }}{{ team.team_lead.last_name|first|upper }}</span>
-							        </div>
-							        <span class="text-xs font-weight-bold text-secondary">{{ team.team_lead.username }}</span>
+							        <a href="{% url "task_manager:worker-detail" pk=team.team_lead.pk %}">
+								        <div class="avatar avatar-xs rounded-circle bg-gradient-info me-2" data-bs-toggle="tooltip" title="{{ team.team_lead.first_name|upper }} {{ team.team_lead.last_name|upper }}">
+								            <span class="text-white text-xxs">{{ team.team_lead.first_name|first|upper }}{{ team.team_lead.last_name|first|upper }}</span>
+								        </div>
+								        <span class="text-xs font-weight-bold text-secondary">{{ team.team_lead }}</span>
+									    </a>
 							    </div>
 							    {% else %}
 							        <span class="text-xs text-secondary">No Lead</span>
