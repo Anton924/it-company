@@ -94,3 +94,6 @@ class Task(models.Model):
     assignees = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="tasks")
     tags = models.ManyToManyField(Tag, related_name="tasks")
     project = models.ForeignKey(Project, on_delete=models.SET_NULL, null=True, blank=True, related_name="tasks")
+
+    def __str__(self):
+        return self.name
