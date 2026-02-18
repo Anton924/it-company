@@ -36,24 +36,26 @@ def get_model_name(model):
 
 
 def get_model_info(model):
-    return get_app_label(model), get_model_name(model)
+    # return get_app_label(model), get_model_name(model)
+    return get_app_label(model), get_verbose_name(model)
 
 
 def action_view_name(*, model, action, app_name=None, full=True):
     if app_name is None:
-        app_name, model_name = get_model_info(model)
+        app_name, verbose_name = get_model_info(model)
     else:
-        model_name = get_model_name(model)
+        verbose_name = get_verbose_name(model)
 
     with override(None):
         if full:
             return "%(app_name)s:%(model_name)s-%(action)s" % {
                 "app_name": app_name,
-                "model_name": model_name.lower().replace(" ", "-"),
+                # "model_name": model_name.lower().replace(" ", "-"),
+                "model_name": verbose_name.lower().replace(" ", "-"),
                 "action": action,
             }
 
         return "%(model_name)s-%(action)s" % {
-            "model_name": model_name.lower().replace(" ", "-"),
+            "model_name": verbose_name.lower().replace(" ", "-"),
             "action": action,
         }
