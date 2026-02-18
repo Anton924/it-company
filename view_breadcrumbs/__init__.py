@@ -2,7 +2,7 @@
 
 __author__ = """Tonye Jack"""
 __email__ = "jtonye@ymail.com"
-__version__ = "2.0.0"
+__version__ = "2.5.1"
 
 from .generic import (
     BaseBreadcrumbMixin,
@@ -11,6 +11,7 @@ from .generic import (
     DetailBreadcrumbMixin,
     ListBreadcrumbMixin,
     UpdateBreadcrumbMixin,
+    UpdateWithNoDetailBreadcrumbMixin
 )
 
 __all__ = [
@@ -20,4 +21,5 @@ __all__ = [
     "ListBreadcrumbMixin",
     "UpdateBreadcrumbMixin",
     "DeleteBreadcrumbMixin",
+    "UpdateWithNoDetailBreadcrumbMixin"
 ]
