@@ -395,6 +395,8 @@ class WorkerDetailView(LoginRequiredMixin, DetailBreadcrumbMixin, generic.Detail
         context["segment"] = "worker details"
         context["undone_tasks"] = Task.objects.filter(is_completed=False, assignees=self.request.user).order_by("deadline")
         context["done_tasks"] = Task.objects.filter(is_completed=True, assignees=self.request.user).order_by("deadline")
+        context["undone_tasks"] = Task.objects.filter(is_completed=False, assignees=self.object.pk).order_by("deadline")
+        context["done_tasks"] = Task.objects.filter(is_completed=True, assignees=self.object.pk).order_by("deadline")
 
         return context
 
