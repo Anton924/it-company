@@ -1,8 +1,13 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.forms.widgets import CheckboxSelectMultiple, TextInput
+from django.forms.widgets import CheckboxSelectMultiple
 
-from task_manager.models import Task, Team, Worker, Project
+from task_manager.models import (
+    Task,
+    Team,
+    Worker,
+    Project
+)
 
 
 class TaskForm(forms.ModelForm):
@@ -113,4 +118,30 @@ class TaskTypeSearchField(forms.Form):
             }
         )
     )
+
+
+class PositionSearchField(forms.Form):
+    name = forms.CharField(
+        max_length=255,
+        required=False,
+        label="",
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Enter name of the position..."
+            }
+        )
+    )
+
+
+
+
+
+
+
+
+
+
+
+
+
 
