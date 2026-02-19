@@ -62,7 +62,7 @@ def index(request: HttpRequest):
 
 class TaskListView(LoginRequiredMixin, ListBreadcrumbMixin, generic.ListView):
     model = Task
-    paginate_by = 1
+    paginate_by = 9
 
     def get_context_data(
         self, *, object_list = ..., **kwargs
@@ -145,6 +145,7 @@ class TaskCreateView(LoginRequiredMixin, CreateBreadcrumbMixin, generic.CreateVi
 
 class TagListView(LoginRequiredMixin, ListBreadcrumbMixin, generic.ListView):
     model = Tag
+    paginate_by = 9
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -204,6 +205,7 @@ class TaskTypeListView(LoginRequiredMixin, ListBreadcrumbMixin, generic.ListView
     model = TaskType
     template_name = "task_manager/task_type_list.html"
     context_object_name = "task_type_list"
+    paginate_by = 9
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -253,6 +255,7 @@ class TaskTypeCreateView(LoginRequiredMixin, CreateBreadcrumbMixin, generic.Crea
 
 class PositionListView(LoginRequiredMixin, ListBreadcrumbMixin, generic.ListView):
     model = Position
+    paginate_by = 9
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -298,6 +301,7 @@ class PositionCreateView(LoginRequiredMixin, CreateBreadcrumbMixin, generic.Crea
 
 class TeamListView(LoginRequiredMixin, ListBreadcrumbMixin, generic.ListView):
     model = Team
+    paginate_by = 9
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -373,6 +377,7 @@ class TeamCreateView(LoginRequiredMixin, CreateBreadcrumbMixin, generic.CreateVi
 
 class WorkerListView(LoginRequiredMixin, ListBreadcrumbMixin, generic.ListView):
     model = Worker
+    paginate_by = 9
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -393,8 +398,6 @@ class WorkerDetailView(LoginRequiredMixin, DetailBreadcrumbMixin, generic.Detail
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["segment"] = "worker details"
-        context["undone_tasks"] = Task.objects.filter(is_completed=False, assignees=self.request.user).order_by("deadline")
-        context["done_tasks"] = Task.objects.filter(is_completed=True, assignees=self.request.user).order_by("deadline")
         context["undone_tasks"] = Task.objects.filter(is_completed=False, assignees=self.object.pk).order_by("deadline")
         context["done_tasks"] = Task.objects.filter(is_completed=True, assignees=self.object.pk).order_by("deadline")
 
@@ -449,6 +452,7 @@ class WorkerDeleteView(LoginRequiredMixin, DeleteBreadcrumbMixin, generic.Delete
 
 class ProjectListView(LoginRequiredMixin, ListBreadcrumbMixin, generic.ListView):
     model = Project
+    paginate_by = 9
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
