@@ -23,11 +23,18 @@
     {% endblock navigation %}
 
     <div class="flex-grow-1">
-        {% block content %}{% endblock content %}
+	    {% block content %}{% endblock content %}
+      {% block pagination %}
+  	    {% include "includes/pagination.html" %}
+      {% endblock %}
     </div>
 
+
+
     <footer class="footer mt-auto py-3">
+      {% block footer %}
         {% include "includes/footer.html" %}
+      {% endblock %}
     </footer>
 
   </main>

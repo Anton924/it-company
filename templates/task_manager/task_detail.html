@@ -70,7 +70,7 @@
                         <div class="d-flex align-items-center p-2">
                             <i class="material-symbols-rounded text-secondary me-2">folder</i>
                             {% if task.project %}
-                                <a href="#" class="text-primary text-sm font-weight-bold mb-0 icon-link icon-link-hover">
+                                <a href="{% url "task_manager:project-detail" pk=task.project.pk %}" class="text-primary text-sm font-weight-bold mb-0 icon-link icon-link-hover">
                                     {{ task.project.name }}
                                 </a>
                             {% else %}
@@ -106,7 +106,7 @@
 	                </a>
 
 	                <div class="d-flex flex-column justify-content-center">
-	                    <a href="#" class="mb-0 text-sm text-dark font-weight-bold text-decoration-none">
+	                    <a href="{% url "task_manager:worker-detail" pk=person.pk %}" class="mb-0 text-sm text-dark font-weight-bold text-decoration-none">
 	                        {{ person.first_name }} {{ person.last_name }}
 	                    </a>
 	                </div>

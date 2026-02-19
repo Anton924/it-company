@@ -1,0 +1,15 @@
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-0">
+  {% if segment != "dashboard" %}
+	   {% for url, label in breadcrumbs %}
+      {% if not url or forloop.counter == breadcrumbs_total %}
+        <li class="breadcrumb-item{% if forloop.counter == breadcrumbs_total %} active{% endif %}" {% if forloop.counter == breadcrumbs_total %}aria-current="page"{% endif %}>{{ label|safe }}</li>
+      {% else %}
+        <li class="breadcrumb-item"><a href="{{ url }}">{{ label|safe }}</a></li>
+      {% endif %}
+    {% endfor %}
+	{% else %}
+	  <li class="breadcrumb-item active" aria-current="page"><a href="{% url "task_manager:index" %}">Dashboard</a></li>
+  {% endif %}
+  </ol>
+</nav>
