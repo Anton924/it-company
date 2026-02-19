@@ -1,0 +1,16 @@
+{% load crispy_forms_filters %}
+
+<div class="flex-grow-1 d-flex justify-content-center px-2 px-md-4">
+  <form method="GET" class="d-flex align-items-center w-100" style="max-width: 350px;">
+    {% csrf_token %}
+    <div class="d-flex align-items-center w-100 bg-transparent">
+      <div class="mb-n3 flex-grow-1">
+        {{ search_field|crispy }}
+      </div>
+      <button type="submit" class="btn btn-outline-white btn-fab d-flex align-items-center justify-content-center m-0 ms-2 flex-shrink-0"
+        style="width: 40px; height: 40px; min-width: 40px; padding: 0; border-radius: 50%;">
+        <i class="material-symbols-rounded" style="font-size: 22px;">search</i>
+			</button>
+    </div>
+  </form>
+</div>
