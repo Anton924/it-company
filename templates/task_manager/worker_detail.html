@@ -73,9 +73,6 @@
             <li class="list-group-item border-0 ps-0 text-sm">
                 <strong class="text-dark">Joined:</strong> &nbsp; {{ worker.date_joined|date:"d M Y" }}
             </li>
-             <li class="list-group-item border-0 ps-0 text-sm">
-                <strong class="text-dark">Last Login:</strong> &nbsp; {{ worker.last_login|date:"d M Y, H:i"|default:"Never" }}
-            </li>
           </ul>
         </div>
       </div>
@@ -193,23 +190,25 @@
             <div class="card-body pt-4 p-3">
                 <ul class="list-group">
                     {% for task in done_tasks %}
-                        <li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg align-items-center">
-                            <div class="d-flex align-items-center">
-                                <div class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-3 btn-sm d-flex align-items-center justify-content-center">
-                                    <i class="material-symbols-rounded text-sm">done</i>
-                                </div>
-                                <div class="d-flex flex-column">
-                                    <h6 class="mb-1 text-dark text-sm">{{ task.name }}</h6>
-                                    <span class="text-xs d-none d-sm-block">Deadline was: {{ task.deadline|date:"d M Y" }}</span>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center text-success text-gradient text-sm font-weight-bold">
-                                Done
-                                <a href="{% url 'task_manager:task-detail' pk=task.pk %}" class="btn btn-link text-secondary mb-0 ms-2" data-bs-toggle="tooltip" title="View Details">
-                                    <i class="material-symbols-rounded text-lg">chevron_right</i>
-                                </a>
-                            </div>
-                        </li>
+											<li class="list-group-item border-0 d-flex justify-content-between ps-0 mb-2 border-radius-lg align-items-center position-relative">
+											    <div class="d-flex align-items-center">
+											        <div class="btn btn-icon-only btn-rounded btn-outline-success mb-0 me-3 btn-sm d-flex align-items-center justify-content-center">
+											            <i class="material-symbols-rounded text-sm">done</i>
+											        </div>
+											        <div class="d-flex flex-column">
+											            <h6 class="mb-1 text-dark text-sm">{{ task.name }}</h6>
+											            <span class="text-xs d-none d-sm-block">Deadline was: {{ task.deadline|date:"d M Y" }}</span>
+											        </div>
+											    </div>
+
+											    <div class="d-flex align-items-center">
+											        <span class="text-success text-gradient text-sm font-weight-bold">Done</span>
+
+											        <a href="{% url 'task_manager:task-detail' pk=task.pk %}" class="stretched-link ms-2 d-flex align-items-center text-success">
+											            <i class="material-symbols-rounded text-lg">chevron_right</i>
+											        </a>
+											    </div>
+											</li>
                     {% empty %}
                         <li class="text-center text-sm text-secondary py-3">
                             No completed tasks yet.
