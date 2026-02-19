@@ -21,7 +21,9 @@ from task_manager.forms import (
     WorkerUpdateForm,
     ProjectForm,
     TaskSearchField,
-    TagSearchField, TaskTypeSearchField
+    TagSearchField,
+    TaskTypeSearchField,
+    PositionSearchField
 )
 from task_manager.models import (
     Task,
@@ -271,9 +273,21 @@ class PositionListView(LoginRequiredMixin, ListBreadcrumbMixin, generic.ListView
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        name = self.request.GET.get("name", None)
         context["segment"] = "positions"
+        context["search_field"] = PositionSearchField(
+            initial={"name": name}
+        )
 
         return context
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        form = PositionSearchField(self.request.GET)
+        if form.is_valid():
+            queryset = queryset.filter(name__icontains=form.cleaned_data["name"])
+
+        return queryset
 
 
 class PositionUpdateView(LoginRequiredMixin, UpdateWithNoDetailBreadcrumbMixin, generic.UpdateView):
