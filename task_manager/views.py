@@ -23,7 +23,7 @@ from task_manager.forms import (
     TaskSearchField,
     TagSearchField,
     TaskTypeSearchField,
-    PositionSearchField
+    PositionSearchField, TeamSearchField
 )
 from task_manager.models import (
     Task,
@@ -331,12 +331,19 @@ class TeamListView(LoginRequiredMixin, ListBreadcrumbMixin, generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        name = self.request.GET.get("name", None)
         context["segment"] = "teams"
+        context["search_field"] = TeamSearchField(
+            initial={"name": name}
+        )
 
         return context
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        form = TeamSearchField(self.request.GET)
+        if form.is_valid():
+            queryset = queryset.filter(name__icontains=form.cleaned_data["name"])
 
         queryset = queryset.select_related("team_lead").prefetch_related("workers", "projects")
 
