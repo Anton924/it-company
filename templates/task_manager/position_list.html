@@ -18,6 +18,9 @@
               <i class="material-symbols-rounded me-2">work</i>
               Positions
             </h6>
+
+	          {% include "includes/search_field.html" %}
+
             <a href="{% url 'task_manager:position-create' %}" class="btn btn-sm btn-white mb-0 text-dark">
               <i class="bi bi-plus-lg me-1"></i> Add Position
             </a>

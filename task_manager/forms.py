@@ -1,8 +1,14 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from django.forms.widgets import CheckboxSelectMultiple, TextInput
+from django.forms.widgets import CheckboxSelectMultiple
+from django.core.exceptions import ValidationError
 
-from task_manager.models import Task, Team, Worker, Project
+from task_manager.models import (
+    Task,
+    Team,
+    Worker,
+    Project
+)
 
 
 class TaskForm(forms.ModelForm):
@@ -100,3 +106,101 @@ class TagSearchField(forms.Form):
             }
         )
     )
+
+
+class TaskTypeSearchField(forms.Form):
+    name = forms.CharField(
+        max_length=255,
+        required=False,
+        label="",
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Enter name of the task type..."
+            }
+        )
+    )
+
+
+class PositionSearchField(forms.Form):
+    name = forms.CharField(
+        max_length=255,
+        required=False,
+        label="",
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Enter name of the position..."
+            }
+        )
+    )
+
+
+class TeamSearchField(forms.Form):
+    name = forms.CharField(
+        max_length=255,
+        required=False,
+        label="",
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Enter name of the team..."
+            }
+        )
+    )
+
+def validate_full_name(full_name: str) -> str:
+    if full_name:
+        errors = []
+        test_str = full_name.replace(" ", "")
+        if not test_str.isalpha():
+            errors.append(
+                "First name ot Last name have to consist only from letters"
+            )
+        if len(full_name.split()) > 2:
+            errors.append("Field only search for First name and Last name(2 words)")
+
+        if errors:
+            raise ValidationError(errors)
+
+    return full_name
+
+class WorkerSearchField(forms.Form):
+    full_name = forms.CharField(
+        max_length=255,
+        required=False,
+        label="",
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Enter first name or last name"
+            }
+        ),
+        validators=(validate_full_name,)
+    )
+
+
+class ProjectSearchField(forms.Form):
+    name = forms.CharField(
+        max_length=255,
+        required=False,
+        label="",
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Enter name of the project..."
+            }
+        )
+    )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
