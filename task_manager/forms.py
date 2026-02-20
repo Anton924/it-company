@@ -133,6 +133,17 @@ class PositionSearchField(forms.Form):
     )
 
 
+class TeamSearchField(forms.Form):
+    name = forms.CharField(
+        max_length=255,
+        required=False,
+        label="",
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Enter name of the team..."
+            }
+        )
+    )
 
 
 
