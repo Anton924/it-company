@@ -1,10 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.db.models.aggregates import Count
 from django.http import HttpRequest
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views import generic
+
+
 from view_breadcrumbs import (
     ListBreadcrumbMixin,
     UpdateBreadcrumbMixin,
@@ -23,7 +26,7 @@ from task_manager.forms import (
     TaskSearchField,
     TagSearchField,
     TaskTypeSearchField,
-    PositionSearchField, TeamSearchField
+    PositionSearchField, TeamSearchField, WorkerSearchField
 )
 from task_manager.models import (
     Task,
@@ -412,17 +415,32 @@ class WorkerListView(LoginRequiredMixin, ListBreadcrumbMixin, generic.ListView):
     model = Worker
     paginate_by = 9
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["segment"] = "workers"
-
-        return context
-
     def get_queryset(self):
         queryset = super().get_queryset()
+        self.form = WorkerSearchField(self.request.GET)
+        if self.form.is_valid():
+            full_name = str(self.form.cleaned_data["full_name"]).split()
+            if len(full_name) == 2:
+                val_1, val_2 = full_name
+            elif len(full_name) == 1:
+                val_1 = full_name[0]
+                val_2 = ""
+            else:
+                val_1, val_2 = "", ""
+
+            queryset = queryset.filter(Q(Q(first_name__icontains=val_1), Q(last_name__icontains=val_2)) | Q(Q(first_name__icontains=val_2), Q(last_name__icontains=val_1)))
+
         queryset = queryset.prefetch_related("teams_team_lead", "teams", "tasks").select_related("position")
 
         return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["segment"] = "workers"
+        context["search_field"] = self.form
+
+
+        return context
 
 
 class WorkerDetailView(LoginRequiredMixin, DetailBreadcrumbMixin, generic.DetailView):
