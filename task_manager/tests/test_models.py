@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 
-from task_manager.models import Tag, TaskType
+from task_manager.models import Tag, TaskType, Position
 
 
 class TagModelTest(TestCase):
@@ -36,4 +36,14 @@ class TaskTypeTest(TestCase):
         self.assertEqual(str(self.task_type), self.task_type.name)
 
 
+class PositionTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.position = Position.objects.create(name="project manager")
+
+    def test_name_label(self):
+        self.assertEqual(self.position._meta.get_field("name").verbose_name, "name")
+
+    def test_object_name_is_name(self):
+        self.assertEqual(str(self.position), self.position.name)
 
