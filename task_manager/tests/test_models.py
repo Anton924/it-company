@@ -31,6 +31,9 @@ class TaskTypeTest(TestCase):
     def test_name_label(self):
         self.assertEqual(self.task_type._meta.get_field("name").verbose_name, "name")
 
+    def test_name_max_length(self):
+        self.assertEqual(self.task_type._meta.get_field("name").max_length, 255)
+
     def test_object_name_is_name(self):
         self.assertEqual(str(self.task_type), self.task_type.name)
 
