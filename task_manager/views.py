@@ -26,7 +26,10 @@ from task_manager.forms import (
     TaskSearchField,
     TagSearchField,
     TaskTypeSearchField,
-    PositionSearchField, TeamSearchField, WorkerSearchField
+    PositionSearchField,
+    TeamSearchField,
+    WorkerSearchField,
+    ProjectSearchField
 )
 from task_manager.models import (
     Task,
@@ -508,12 +511,16 @@ class ProjectListView(LoginRequiredMixin, ListBreadcrumbMixin, generic.ListView)
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["segment"] = "projects"
+        context["search_field"] = self.form
 
         return context
 
     def get_queryset(self):
         queryset = super().get_queryset()
         queryset = queryset.prefetch_related("teams", "tasks")
+        self.form = ProjectSearchField(self.request.GET)
+        if self.form.is_valid():
+            queryset = queryset.filter(name__icontains=self.form.cleaned_data["name"])
 
         return queryset
 
