@@ -176,6 +176,18 @@ class WorkerSearchField(forms.Form):
     )
 
 
+class ProjectSearchField(forms.Form):
+    name = forms.CharField(
+        max_length=255,
+        required=False,
+        label="",
+        widget=forms.TextInput(
+            attrs={
+                "placeholder": "Enter name of the project..."
+            }
+        )
+    )
+
 
 
 
