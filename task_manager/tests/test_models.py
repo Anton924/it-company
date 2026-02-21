@@ -65,11 +65,12 @@ class PositionTest(TestCase):
 class WorkerTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        pos_developer = Position.objects.create(name="developer")
         cls.worker = Worker.objects.create(
             first_name="Ivan",
             last_name="Ivanov",
             email="ivanivanow@gmail.com",
-            position=Position.objects.create(name="developer")
+            position=pos_developer
         )
 
     def test_position_label(self):
