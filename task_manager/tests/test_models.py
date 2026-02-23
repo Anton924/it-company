@@ -159,3 +159,37 @@ class TeamTest(TestMixin):
     def test_object_name_is_name(self):
         self.assertEqual(str(self.team), self.team.name)
 
+
+class ProjectTest(TestMixin):
+    def test_name_label(self):
+        self.assertEqual(self.project._meta.get_field("name").verbose_name, "name")
+
+    def test_teams_label(self):
+        self.assertEqual(self.project._meta.get_field("teams").verbose_name, "teams")
+
+    def test_teams_foreign_key_model(self):
+        self.assertEqual(self.project._meta.get_field("teams").remote_field.model, Team)
+
+    def test_teams_foreign_key_related_name(self):
+        self.assertEqual(self.project._meta.get_field("teams").remote_field.related_name, "projects")
+
+    def test_budget_label(self):
+        self.assertEqual(self.project._meta.get_field("budget").verbose_name, "budget")
+
+    def test_description_label(self):
+        self.assertEqual(self.project._meta.get_field("description").verbose_name, "description")
+
+    def test_description_blank_state(self):
+        self.assertTrue(self.project._meta.get_field("description").blank)
+
+    def test_status_label(self):
+        self.assertEqual(self.project._meta.get_field("status").verbose_name, "status")
+
+    def test_status_max_length(self):
+        self.assertEqual(self.project._meta.get_field("status").max_length, 255)
+
+    def test_status_choices(self):
+        self.assertEqual(self.project._meta.get_field("status").choices, self.STATUS_CHOICES)
+
+    def test_object_name_is_name(self):
+        self.assertEqual(str(self.project), self.project.name)
