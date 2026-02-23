@@ -58,6 +58,13 @@ class TestMixin(TestCase):
 
         cls.project.teams.set((cls.team,))
 
+        cls.STATUS_CHOICES = (
+            ("IN_PROCESS", "in process"),
+            ("DONE", "done"),
+            ("PAUSED", "paused"),
+            ("CANCELED", "canceled")
+        )
+
 class TagModelTest(TestMixin):
     def test_name_label(self):
         self.assertEqual(self.tag._meta.get_field("name").verbose_name,"name")
