@@ -7,15 +7,58 @@ from task_manager.models import (
     TaskType,
     Position,
     Worker,
-    Team
+    Team,
+    Project
 )
 
 
-class TagModelTest(TestCase):
+class TestMixin(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.tag = Tag.objects.create(name="Bug", description="Fixing errors")
+        cls.task_type = TaskType.objects.create(name="development")
+        cls.position = Position.objects.create(name="project manager")
+        cls.pos_developer = Position.objects.create(name="developer")
+        cls.pos_designer = Position.objects.create(name="designer")
+        cls.worker = Worker.objects.create(
+            first_name="Ivan",
+            last_name="Ivanov",
+            email="ivanivanow@gmail.com",
+            position=cls.pos_developer
+        )
+        cls.workers = [
+            Worker.objects.create(
+                first_name="Petro",
+                last_name="Sydorov",
+                email="petrosydorov@gmail.com",
+                username="petro",
+                position=cls.pos_designer
+            ),
+            Worker.objects.create(
+                first_name="Olga",
+                last_name="Melnyk",
+                email="olgamelnyk@gmail.com",
+                username="olga",
+                position=cls.pos_developer
+            )
+        ]
+        cls.team = Team.objects.create(
+            name="Alpha",
+            team_lead=cls.worker
+        )
 
+        cls.team.workers.set(cls.workers)
+
+        cls.project = Project.objects.create(
+            name="Mobile App",
+            budget=50000,
+            description="We are creating the best app ever!",
+            status="IN_PROGRESS"
+        )
+
+        cls.project.teams.set((cls.team,))
+
+class TagModelTest(TestMixin):
     def test_name_label(self):
         self.assertEqual(self.tag._meta.get_field("name").verbose_name,"name")
 
@@ -32,12 +75,7 @@ class TagModelTest(TestCase):
         self.assertEqual(str(self.tag), self.tag.name)
 
 
-class TaskTypeTest(TestCase):
-
-    @classmethod
-    def setUpTestData(cls):
-        cls.task_type = TaskType.objects.create(name="development")
-
+class TaskTypeTest(TestMixin):
     def test_name_label(self):
         self.assertEqual(self.task_type._meta.get_field("name").verbose_name, "name")
 
@@ -48,11 +86,7 @@ class TaskTypeTest(TestCase):
         self.assertEqual(str(self.task_type), self.task_type.name)
 
 
-class PositionTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.position = Position.objects.create(name="project manager")
-
+class PositionTest(TestMixin):
     def test_name_label(self):
         self.assertEqual(self.position._meta.get_field("name").verbose_name, "name")
 
@@ -63,17 +97,7 @@ class PositionTest(TestCase):
         self.assertEqual(str(self.position), self.position.name)
 
 
-class WorkerTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        pos_developer = Position.objects.create(name="developer")
-        cls.worker = Worker.objects.create(
-            first_name="Ivan",
-            last_name="Ivanov",
-            email="ivanivanow@gmail.com",
-            position=pos_developer
-        )
-
+class WorkerTest(TestMixin):
     def test_position_label(self):
         self.assertEqual(self.worker._meta.get_field("position").verbose_name, "position")
 
@@ -94,42 +118,7 @@ class WorkerTest(TestCase):
         self.assertEqual(str(self.worker), object_name)
 
 
-class TeamTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        pos_developer = Position.objects.create(name="developer")
-        pos_designer = Position.objects.create(name="designer")
-        team_lead = Worker.objects.create(
-            first_name="Ivan",
-            last_name="Ivanov",
-            email="ivanivanow@gmail.com",
-            username="ivan",
-            position=pos_developer
-        )
-        workers = [
-            Worker.objects.create(
-                first_name="Petro",
-                last_name="Sydorov",
-                email="petrosydorov@gmail.com",
-                username="petro",
-                position=pos_designer
-            ),
-            Worker.objects.create(
-                first_name="Olga",
-                last_name="Melnyk",
-                email="olgamelnyk@gmail.com",
-                username="olga",
-                position=pos_developer
-            )
-        ]
-        cls.team = Team.objects.create(
-            name="Alpha",
-            team_lead=team_lead
-        )
-
-        cls.team.workers.set(workers)
-
-
+class TeamTest(TestMixin):
     def test_name_label(self):
         self.assertEqual(self.team._meta.get_field("name").verbose_name, "name")
 
@@ -162,36 +151,4 @@ class TeamTest(TestCase):
 
     def test_object_name_is_name(self):
         self.assertEqual(str(self.team), self.team.name)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        def test_position_on_delete_and_null_state(self):
-            # Checking on_delete to be set to SET_NULL
-            self.assertEqual(self.worker._meta.get_field("position").remote_field.on_delete, models.SET_NULL)
-            # Checking so that field can store Null value
-            self.assertTrue(self.worker._meta.get_field("position").remote_field.null)
-
-        def test_position_related_name(self):
-            self.assertEqual(self.worker._meta.get_field("position").remote_field.related_name, "workers")
-
-        def test_object_name_is_first_name_and_last_name(self):
-            object_name = f"{self.worker.first_name} {self.worker.last_name}"
-            self.assertEqual(str(self.worker), object_name)
 
