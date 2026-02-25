@@ -187,10 +187,10 @@ class ProjectTest(TestMixin):
     def test_teams_label(self):
         self.assertEqual(self.project._meta.get_field("teams").verbose_name, "teams")
 
-    def test_teams_foreign_key_model(self):
+    def test_teams_many2many_model(self):
         self.assertEqual(self.project._meta.get_field("teams").remote_field.model, Team)
 
-    def test_teams_foreign_key_related_name(self):
+    def test_teams_related_name(self):
         self.assertEqual(self.project._meta.get_field("teams").remote_field.related_name, "projects")
 
     def test_budget_label(self):
