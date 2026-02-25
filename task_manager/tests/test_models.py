@@ -65,6 +65,26 @@ class TestMixin(TestCase):
             ("CANCELED", "canceled")
         )
 
+        cls.task = Task.objects.create(
+            name="Fix Auth Bug",
+            description="Need some time",
+            deadline=date(2026, 2, 25),
+            is_completed=False,
+            priority="LOW",
+            task_type=cls.task_type,
+            project=cls.project
+        )
+
+        cls.task.assignees.set(cls.workers)
+        cls.task.tags.set((cls.tag,))
+
+        cls.PRIORITY_CHOICES = (
+            ("CRITICAL", "Urgent"),
+            ("HIGH", "High"),
+            ("MEDIUM", "Medium"),
+            ("LOW", "Low")
+        )
+
 class TagModelTest(TestMixin):
     def test_name_label(self):
         self.assertEqual(self.tag._meta.get_field("name").verbose_name,"name")
@@ -193,3 +213,83 @@ class ProjectTest(TestMixin):
 
     def test_object_name_is_name(self):
         self.assertEqual(str(self.project), self.project.name)
+
+
+class TaskTest(TestMixin):
+    def test_name_label(self):
+        self.assertEqual(self.task._meta.get_field("name").verbose_name, "name")
+
+    def test_name_max_length(self):
+        self.assertEqual(self.task._meta.get_field("name").max_length, 255)
+
+    def test_description_label(self):
+        self.assertEqual(self.task._meta.get_field("description").verbose_name, "description")
+
+    def test_deadline_label(self):
+        self.assertEqual(self.task._meta.get_field("deadline").verbose_name, "deadline")
+
+    def test_is_completed_label(self):
+        self.assertEqual(self.task._meta.get_field("is_completed").verbose_name, "is completed")
+
+    def test_priority_label(self):
+        self.assertEqual(self.task._meta.get_field("priority").verbose_name, "priority")
+
+    def test_priority_max_length(self):
+        self.assertEqual(self.task._meta.get_field("priority").max_length, 255)
+
+    def test_priority_choices(self):
+        self.assertEqual(self.task._meta.get_field("priority").choices, self.PRIORITY_CHOICES)
+
+    def test_task_type_label(self):
+        self.assertEqual(self.task._meta.get_field("task_type").verbose_name, "task type")
+
+    def test_task_type_foreign_key_model(self):
+        self.assertEqual(self.task._meta.get_field("task_type").remote_field.model, TaskType)
+
+    def test_task_type_on_delete_and_null_state(self):
+        # Checking on_delete to be set to SET_NULL
+        self.assertEqual(self.task._meta.get_field("task_type").remote_field.on_delete, models.SET_NULL)
+        # Checking so that field can store Null value
+        self.assertTrue(self.task._meta.get_field("task_type").null)
+
+    def test_task_type_related_name(self):
+        self.assertEqual(self.task._meta.get_field("task_type").remote_field.related_name, "tasks")
+
+    def test_assignees_label(self):
+        self.assertEqual(self.task._meta.get_field("assignees").verbose_name, "assignees")
+
+    def test_assignees_many2many_model(self):
+        self.assertEqual(self.task._meta.get_field("assignees").remote_field.model, Worker)
+
+    def test_assignees_related_name(self):
+        self.assertEqual(self.task._meta.get_field("assignees").remote_field.related_name, "tasks")
+
+    def test_tags_label(self):
+        self.assertEqual(self.task._meta.get_field("tags").verbose_name, "tags")
+
+    def test_tags_many2many_model(self):
+        self.assertEqual(self.task._meta.get_field("tags").remote_field.model, Tag)
+
+    def test_tags_related_name(self):
+        self.assertEqual(self.task._meta.get_field("tags").remote_field.related_name, "tasks")
+
+    def test_project_label(self):
+        self.assertEqual(self.task._meta.get_field("project").verbose_name, "project")
+
+    def test_project_foreign_key_model(self):
+        self.assertEqual(self.task._meta.get_field("project").remote_field.model, Project)
+
+    def test_project_on_delete_and_null_state(self):
+        # Checking on_delete to be set to SET_NULL
+        self.assertEqual(self.task._meta.get_field("project").remote_field.on_delete, models.SET_NULL)
+        # Checking so that field can store Null value
+        self.assertTrue(self.task._meta.get_field("project").null)
+
+    def test_project_blank(self):
+        self.assertTrue(self.task._meta.get_field("project").blank)
+
+    def test_project_related_name(self):
+        self.assertEqual(self.task._meta.get_field("project").remote_field.related_name, "tasks")
+
+    def test_object_name_is_name(self):
+        self.assertEqual(str(self.task), self.task.name)
