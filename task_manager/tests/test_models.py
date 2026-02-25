@@ -1,3 +1,6 @@
+from datetime import date
+
+
 from django.db import models
 from django.test import TestCase
 
@@ -8,7 +11,8 @@ from task_manager.models import (
     Position,
     Worker,
     Team,
-    Project
+    Project,
+    Task
 )
 
 
@@ -162,7 +166,10 @@ class TeamTest(TestMixin):
         # Checking on_delete to be set to SET_NULL
         self.assertEqual(self.team._meta.get_field("team_lead").remote_field.on_delete, models.SET_NULL)
         # Checking so that field can store Null value
-        self.assertTrue(self.team._meta.get_field("team_lead").remote_field.null)
+        self.assertTrue(self.team._meta.get_field("team_lead").null)
+
+    def test_team_lead_blank(self):
+        self.assertTrue(self.team._meta.get_field("team_lead").blank)
 
     def test_team_lead_related_name(self):
         self.assertEqual(self.team._meta.get_field("team_lead").remote_field.related_name, "teams_team_lead")
