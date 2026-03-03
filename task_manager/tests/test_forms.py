@@ -127,3 +127,36 @@ class TestFormMixin(TestCase):
         }
 
 
+class TaskFormTest(TestFormMixin):
+    def setUp(self):
+        self.create_all()
+        self.form = TaskForm()
+
+    def test_task_form_labels_are_customized(self):
+        self.assertEqual(self.form.fields["task_type"].empty_label, "Choose type of task...")
+        self.assertEqual(self.form.fields["project"].empty_label, "Choose project this task belong...")
+
+    def test_task_widgets_are_correct(self):
+        self.assertIsInstance(self.form.fields["tags"].widget, CheckboxSelectMultiple)
+        self.assertIsInstance(self.form.fields["assignees"].widget, CheckboxSelectMultiple)
+        self.assertEqual(self.form.fields["deadline"].widget.__class__.__name__, "DateTimeInput")
+        self.assertEqual(self.form.fields["deadline"].widget.format, "%Y-%m-%d")
+        html = str(self.form["deadline"])
+        self.assertIn('type="date"', html)
+
+    def test_task_form_model(self):
+        self.assertEqual(self.form.Meta.model, Task)
+
+    def test_task_form_valid_data(self):
+        form = TaskForm(data=self.task_data)
+        self.assertTrue(form.is_valid(), form.errors)
+
+    def test_task_form_invalid_data(self):
+        test_data = self.task_data
+        test_data["name"] = ""
+        form = TaskForm(data=test_data)
+        self.assertFalse(form.is_valid(), form.errors)
+        self.assertIn("name", form.errors)
+
+
+
