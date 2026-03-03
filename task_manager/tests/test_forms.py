@@ -308,3 +308,63 @@ class TaskSearchFieldTest(TestCase):
             self.assertTrue(form.is_valid())
 
 
+class WorkerSearchFieldTest(TestFormMixin):
+    def setUp(self):
+        self.form = WorkerSearchField()
+
+    def test_worker_search_form_field_not_required(self):
+        self.assertFalse(self.form.fields["full_name"].required)
+
+    def test_worker_search_form_field_label(self):
+        self.assertEqual(self.form.fields["full_name"].label, "")
+
+    def test_worker_search_widget_are_correct(self):
+        self.assertIsInstance(self.form.fields["full_name"].widget, forms.TextInput)
+
+    def test_worker_search_form_widget_attributes_correct(self):
+        self.assertEqual(self.form.fields["full_name"].widget.attrs["placeholder"], "Enter first name or/and last name")
+
+
+    def test_worker_search_form_checking_for_required(self):
+        test_data = {"full_name": ""}
+        form = WorkerSearchField(test_data)
+
+        self.assertTrue(form.is_valid())
+
+    def test_validate_full_name_consist_not_only_letters(self):
+        test_data = [
+            "Name34",
+            "Name12 Lastname",
+            "Name Lastname12",
+            "12",
+            "12 34"
+        ]
+        for idx in range(len(test_data)):
+            form = WorkerSearchField(data={"full_name":test_data[idx]})
+            form.is_valid()
+            self.assertFormError(form, field="full_name", errors=["First name ot Last name have to consist only from letters"])
+
+    def test_validate_full_name_length_more_than_2(self):
+        test_data = [
+            "Name Last Name",
+            "Last Name Name Name",
+            "Ivan Ivanov Iva Iva Iva Iva Iva"
+        ]
+        for idx in range(len(test_data)):
+            form = WorkerSearchField(data={"full_name":test_data[idx]})
+            form.is_valid()
+            self.assertFormError(form, field="full_name", errors=["Field only search for First name and Last name(maximum 2 words)"])
+
+    def test_valid_data(self):
+        test_data = [
+            "Ivan Ivanov",
+            "Ivan",
+            "Anastasia Kivalova",
+            "Kivalova"
+        ]
+
+        for idx in range(len(test_data)):
+            form = WorkerSearchField(data={"full_name": test_data[idx]})
+            self.assertTrue(form.is_valid())
+
+
