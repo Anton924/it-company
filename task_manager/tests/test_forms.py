@@ -211,3 +211,50 @@ class WorkerCreationFormTest(TestFormMixin):
         self.assertIn("password1", form.errors)
 
 
+class WorkerUpdateFormTest(TestFormMixin):
+    def setUp(self):
+        self.create_all()
+        self.form = WorkerUpdateForm()
+
+    def test_worker_update_form_model(self):
+        self.assertEqual(self.form.Meta.model, Worker)
+
+    def test_worker_update_form_fields(self):
+        fields = (
+            "first_name",
+            "last_name",
+            "email",
+            "position",
+        )
+
+        self.assertEqual(self.form.Meta.fields, fields)
+
+    def test_worker_update_form_valid_data(self):
+        form = WorkerUpdateForm(self.worker_update_data)
+        self.assertTrue(form.is_valid())
+
+
+class ProjectFormTest(TestFormMixin):
+    def setUp(self):
+        self.create_all()
+        self.form = ProjectForm()
+
+    def test_project_widgets_are_correct(self):
+        self.assertIsInstance(self.form.fields["teams"].widget, CheckboxSelectMultiple)
+
+    def test_project_form_model(self):
+        self.assertEqual(self.form.Meta.model, Project)
+
+    def test_project_form_valid_data(self):
+        form = ProjectForm(self.project_data)
+
+        self.assertTrue(form.is_valid(), form.errors)
+
+    def test_project_form_invalid_data(self):
+        test_data = self.project_data
+        test_data["name"] = ""
+        form = ProjectForm(test_data)
+        self.assertFalse(form.is_valid())
+        self.assertIn("name", form.errors)
+
+
