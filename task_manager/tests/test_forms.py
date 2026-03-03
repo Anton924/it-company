@@ -258,3 +258,53 @@ class ProjectFormTest(TestFormMixin):
         self.assertIn("name", form.errors)
 
 
+class TaskSearchFieldTest(TestCase):
+    def setUp(self):
+        self.test_forms = [
+            TaskSearchField(),
+            TagSearchField(),
+            TaskTypeSearchField(),
+            PositionSearchField(),
+            TeamSearchField(),
+            ProjectSearchField()
+        ]
+
+    def test_search_form_field_not_required(self):
+        for form in self.test_forms:
+            self.assertFalse(form.fields["name"].required)
+
+    def test_search_form_field_label(self):
+        for form in self.test_forms:
+            self.assertEqual(form.fields["name"].label, "")
+
+    def test_search_widget_are_correct(self):
+        for form in self.test_forms:
+            self.assertIsInstance(form.fields["name"].widget, forms.TextInput)
+
+    def test_task_search_form_widget_attributes_correct(self):
+        placeholders = [
+            "Enter name of the task...",
+            "Enter name of the tag...",
+            "Enter name of the task type...",
+            "Enter name of the position...",
+            "Enter name of the team...",
+            "Enter name of the project..."
+        ]
+        for idx in range(len(self.test_forms)):
+            self.assertEqual(self.test_forms[idx].fields["name"].widget.attrs["placeholder"], placeholders[idx])
+
+    def test_task_search_form_checking_for_required(self):
+        test_data = {"name": ""}
+        test_forms = [
+            TaskSearchField,
+            TagSearchField,
+            TaskTypeSearchField,
+            PositionSearchField,
+            TeamSearchField,
+            ProjectSearchField
+        ]
+        for form in test_forms:
+            form = form(test_data)
+            self.assertTrue(form.is_valid())
+
+
