@@ -186,3 +186,28 @@ class TeamFormTest(TestFormMixin):
         self.assertIn("name", form.errors)
 
 
+class WorkerCreationFormTest(TestFormMixin):
+    def setUp(self):
+        self.create_all()
+        self.form = WorkerCreationForm()
+
+    def test_worker_create_form_label_customized(self):
+        self.assertEqual(self.form.fields["position"].empty_label, "Choose position...")
+
+    def test_worker_create_form_model(self):
+        self.assertEqual(self.form.Meta.model, Worker)
+
+    def test_worker_create_form_valid_data(self):
+        form = WorkerCreationForm(self.worker_data)
+
+        self.assertTrue(form.is_valid(), form.errors)
+
+    def test_worker_create_form_invalid_data(self):
+        test_data = self.worker_data
+        test_data["password1"] = ""
+        form = WorkerCreationForm(test_data)
+
+        self.assertFalse(form.is_valid())
+        self.assertIn("password1", form.errors)
+
+
