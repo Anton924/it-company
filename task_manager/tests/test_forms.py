@@ -160,3 +160,29 @@ class TaskFormTest(TestFormMixin):
 
 
 
+class TeamFormTest(TestFormMixin):
+    def setUp(self):
+        self.create_all()
+        self.form = TeamForm()
+
+    def test_team_form_label_customized(self):
+        self.assertEqual(self.form.fields["team_lead"].empty_label, "Choose team leader...")
+
+    def test_team_widgets_are_correct(self):
+        self.assertIsInstance(self.form.fields["workers"].widget, CheckboxSelectMultiple)
+
+    def test_team_form_model(self):
+        self.assertEqual(self.form.Meta.model, Team)
+
+    def test_team_form_valid_data(self):
+        form = TeamForm(self.team_data)
+        self.assertTrue(form.is_valid(), form.errors)
+
+    def test_team_form_invalid_data(self):
+        test_data = self.team_data
+        test_data["name"] = ""
+        form = TeamForm(test_data)
+        self.assertFalse(form.is_valid())
+        self.assertIn("name", form.errors)
+
+
