@@ -258,7 +258,7 @@ class ProjectFormTest(TestFormMixin):
         self.assertIn("name", form.errors)
 
 
-class TaskSearchFieldTest(TestCase):
+class SearchFieldsTest(TestCase):
     def setUp(self):
         self.test_forms = [
             TaskSearchField(),
