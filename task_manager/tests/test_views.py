@@ -120,3 +120,20 @@ class TaskListViewTest(ViewsTestMixin):
         self.assertIn("segment", response.context)
 
 
+class TaskListViewLoggedInLoggedOut(ViewsTestMixin):
+    def setUp(self):
+        pass
+
+    def test_user_logged_out_redirection(self):
+        response = self.client.get(reverse("task_manager:task-list"))
+        self.assertRedirects(response, "/accounts/login/?next=/tasks/")
+
+    def test_user_logged_in(self):
+        self.client.force_login(self.worker)
+        response = self.client.get(reverse("task_manager:task-list"))
+        self.assertTrue(response.status_code, 200)
+        self.assertEqual(str(response.context["user"]), "Ivan Ivanov")
+        self.assertTemplateUsed(response, "task_manager/task_list.html")
+
+
+
