@@ -71,3 +71,52 @@ class ViewsTestMixin(TestCase):
         cls.project.teams.set((cls.team,)) # used
 
 
+class TaskListViewTest(ViewsTestMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        number_tasks = 10
+
+        for task_id in range(number_tasks):
+            Task.objects.create(
+                name=f"Task {task_id}",
+                description="Need some time",
+                deadline=date(2026, 2, 25),
+                is_completed=False,
+                priority="LOW",
+                task_type=cls.task_type,
+                project=cls.project
+            )
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get("/tasks/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(reverse("task_manager:task-list"))
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(reverse("task_manager:task-list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "task_manager/task_list.html")
+
+    def test_pagination_is_nine(self):
+        response = self.client.get(reverse("task_manager:task-list"))
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue("is_paginated", response.context)
+        self.assertTrue(response.context["is_paginated"] == True)
+        self.assertEqual(len(response.context["task_list"]), 9)
+
+    def test_pagination_is_one(self):
+        response = self.client.get(reverse("task_manager:task-list") + "?page=2")
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue("is_paginated", response.context)
+        self.assertTrue(response.context["is_paginated"] == True)
+        self.assertEqual(len(response.context["task_list"]), 1)
+
+    def test_context_data(self):
+        response = self.client.get(reverse("task_manager:task-list"))
+        self.assertIn("segment", response.context)
+
+
