@@ -18,11 +18,18 @@ class ViewsTestMixin(TestCase):
     def setUp(self):
         position = Position.objects.create(name="project manager")
         user = Worker.objects.create(
+class LoginClientTestMixin(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.position = Position.objects.create(name="project manager")
+        cls.user = Worker.objects.create(
             first_name="Admin",
             email="admin@gmail.com",
-            position=position
+            position=cls.position
         )
-        self.client.force_login(user)
+    def setUp(self):
+        self.client.force_login(self.user)
 
 
     @classmethod
