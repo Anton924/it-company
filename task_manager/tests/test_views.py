@@ -34,8 +34,9 @@ class LoginClientTestMixin(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.tag = Tag.objects.create(name="Bug", description="Fixing errors") # used
-        cls.task_type = TaskType.objects.create(name="development") # used
+        super().setUpTestData()
+        cls.tag = Tag.objects.create(name="Bug", description="Fixing errors")
+        cls.task_type = TaskType.objects.create(name="development")  # used
         cls.pos_developer = Position.objects.create(name="developer")
         cls.pos_designer = Position.objects.create(name="designer")
         cls.worker = Worker.objects.create(
