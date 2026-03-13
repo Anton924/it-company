@@ -75,8 +75,47 @@ class LoginClientTestMixin(TestCase):
             status="IN_PROGRESS"
         ) # used
 
-        cls.project.teams.set((cls.team,)) # used
+        cls.project.teams.set((cls.team,))
 
+
+class TaskTypeObjectCreatingMixin(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.task_type = TaskType.objects.create(name="Task type")
+
+
+class TagObjectCreatingMixin(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.tag = Tag.objects.create(name="Tag")
+
+
+class PositionObjectCreatingMixin(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.position = Position.objects.create(
+            name="Position"
+        )
+
+
+class TeamObjectCreatingMixin(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        pos_developer = Position.objects.create(name="developer")
+        cls.worker = Worker.objects.create(
+            first_name="Ivan",
+            last_name="Ivanov",
+            username="ivan",
+            email="ivanivanow@gmail.com",
+            position=pos_developer
+        )
+        cls.team = Team.objects.create(
+            name="Alpha",
+            team_lead=cls.worker
+        )
 
 class TaskListViewTest(ViewsTestMixin):
     @classmethod
