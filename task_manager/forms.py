@@ -160,7 +160,6 @@ def validate_full_name(full_name: str) -> str:
         if errors:
             raise ValidationError(errors)
 
-    return full_name
 
 class WorkerSearchField(forms.Form):
     full_name = forms.CharField(
