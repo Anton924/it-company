@@ -622,4 +622,42 @@ class TagDeleteViewTest(LoginClientTestMixin, TagObjectCreatingMixin):
         self.assertFalse(TaskType.objects.filter(name="Tag").exists())
 
 
+class TagCreateViewTest(LoginClientTestMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.url = reverse("task_manager:tag-create")
+
+        cls.tag = {
+            "name": "Tag"
+        }
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get("/tags/create/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "task_manager/tag_form.html")
+
+    def test_tag_create_post(self):
+        response = self.client.post(self.url, data=self.tag)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Tag.objects.filter(name="Tag").exists())
+
+    def test_tag_create_invalid_data(self):
+        invalid_data = {
+            "name": ""
+        }
+        response = self.client.post(self.url, data=invalid_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(Tag.objects.filter(name="").exists())
+
+
 
