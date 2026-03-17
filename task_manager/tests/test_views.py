@@ -360,12 +360,22 @@ class TaskCreateViewTest(LoginClientTestMixin, TaskObjectCreationMixin):
         self.assertFalse(Task.objects.filter(name="").exists())
 
 
+class CheckInLoggedInLoggedOutRedirection(TestCase):
     def test_user_logged_out_redirection(self):
         response = self.client.get(reverse("task_manager:task-list"))
+        self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, "/accounts/login/?next=/tasks/")
 
     def test_user_logged_in(self):
-        self.client.force_login(self.worker)
+        pos_developer = Position.objects.create(name="developer")
+        worker = Worker.objects.create(
+            first_name="Ivan",
+            last_name="Ivanov",
+            username="ivan",
+            email="ivanivanow@gmail.com",
+            position=pos_developer
+        )
+        self.client.force_login(worker)
         response = self.client.get(reverse("task_manager:task-list"))
         self.assertTrue(response.status_code, 200)
         self.assertEqual(str(response.context["user"]), "Ivan Ivanov")
