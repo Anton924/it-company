@@ -24,7 +24,7 @@ class LoginClientTestMixin(TestCase):
         super().setUpTestData()
         cls.position = Position.objects.create(name="project manager")
         cls.user = Worker.objects.create(
-            first_name="Admin",
+            first_name="User", # for testing worker list view, the first_name or last_name can not have letter "a"
             email="admin@gmail.com",
             position=cls.position
         )
@@ -43,10 +43,10 @@ class TaskObjectCreationMixin(TestCase):
         cls.worker = Worker.objects.create(
             first_name="Ivan",
             last_name="Ivanov",
-            username = "ivan",
+            username="ivan",
             email="ivanivanow@gmail.com",
             position=cls.pos_developer
-        ) # used
+        )  # used
         cls.workers = [
             Worker.objects.create(
                 first_name="Petro",
@@ -66,7 +66,7 @@ class TaskObjectCreationMixin(TestCase):
         cls.team = Team.objects.create(
             name="Alpha",
             team_lead=cls.worker
-        ) # used
+        )  # used
 
         cls.team.workers.set(cls.workers)  # used
 
@@ -75,7 +75,7 @@ class TaskObjectCreationMixin(TestCase):
             budget=50000,
             description="We are creating the best app ever!",
             status="IN_PROGRESS"
-        ) # used
+        )  # used
 
         cls.project.teams.set((cls.team,))
 
@@ -115,7 +115,7 @@ class TeamObjectCreatingMixin(TestCase):
             position=pos_developer
         )
         cls.team = Team.objects.create(
-            name="Alpha",
+            name="Team",
             team_lead=cls.worker
         )
 
