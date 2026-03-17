@@ -11,6 +11,3 @@ def pending_tasks(request: HttpRequest) -> dict:
         return {"user_tasks": user_tasks}
     return {"user_tasks": []}
 
-
-# def pages(request: HttpRequest) -> dict:
-#     return None
