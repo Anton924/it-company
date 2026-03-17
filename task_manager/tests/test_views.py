@@ -207,11 +207,50 @@ class TaskListViewTest(LoginClientTestMixin, TaskObjectCreationMixin):
         self.assertEqual([task.name for task in response.context["task_list"]], ["Task 1"])
 
 
+class TaskUpdateViewTest(LoginClientTestMixin, TaskObjectCreationMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.task = Task.objects.create(
+            name="Task",
+            description="Need some time",
+            deadline=date(2026, 2, 25),
+            is_completed=False,
+            priority="LOW",
+            task_type=cls.task_type,
+            project=cls.project
+        )
 
+        cls.url = reverse("task_manager:task-update", kwargs={"pk": cls.task.id})
 
-class TaskListViewLoggedInLoggedOut(ViewsTestMixin):
-    def setUp(self):
-        pass
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get(f"/tasks/{self.task.pk}/update/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "task_manager/task_form.html")
+
+    def test_task_update_post(self):
+        update_data = {
+            "name": "Updated task",
+            "description": "Need some time",
+            "deadline": date(2026, 2, 25),
+            "is_completed": False,
+            "priority": "LOW",
+            "task_type": self.task_type.id,
+            "project": self.project.id,
+            "tags": [self.tag.id],
+            "assignees": [worker.pk for worker in self.workers]
+        }
+        response = self.client.post(self.url, data=update_data)
+        self.assertEqual(response.status_code, 302)
+        self.task.refresh_from_db()
+        self.assertEqual(self.task.name, "Updated task")
 
     def test_user_logged_out_redirection(self):
         response = self.client.get(reverse("task_manager:task-list"))
