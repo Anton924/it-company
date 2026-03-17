@@ -89,8 +89,7 @@ class TaskSearchField(forms.Form):
         label="",
         widget= forms.TextInput(
             attrs={
-                "placeholder": "Enter the name of the task...",
-                "class": "form-control-sm"
+                "placeholder": "Enter name of the task...",
             }
         )
     )
