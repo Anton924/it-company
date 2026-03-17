@@ -521,4 +521,53 @@ class TaskTypeCreateViewTest(LoginClientTestMixin):
         self.assertFalse(TaskType.objects.filter(name="").exists())
 
 
+class TagListViewTest(LoginClientTestMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.url = reverse("task_manager:tag-list")
+        number_tags = 10
+        for num in range(number_tags):
+            Tag.objects.create(name=f"Tag {num}")
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get("/tags/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "task_manager/tag_list.html")
+
+    def test_pagination_is_nine(self):
+        response = self.client.get(self.url, data={"page": "1"})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("is_paginated", response.context)
+        self.assertTrue(response.context["is_paginated"] == True)
+        self.assertEqual(len(response.context["tag_list"]), 9)
+
+    def test_pagination_one(self):
+        response = self.client.get(self.url, data={"page": "2"})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("is_paginated", response.context)
+        self.assertTrue(response.context["is_paginated"] == True)
+        self.assertEqual(len(response.context["tag_list"]), 1)
+
+    def test_context_data_correct(self):
+        response = self.client.get(self.url, data={"name": "1"})
+        self.assertIn("segment", response.context)
+        self.assertEqual(response.context["segment"], "tags")
+        self.assertIn("search_field", response.context)
+        self.assertIsInstance(response.context["search_field"], TagSearchField)
+        self.assertEqual(response.context["search_field"].initial.get("name"), "1")
+
+    def test_queryset(self):
+        response = self.client.get(self.url, data={"name": "1"})
+        self.assertEqual(len(response.context["tag_list"]), 1)
+        self.assertEqual([tag.name for tag in response.context["tag_list"]], ["Tag 1"])
+
+
 
