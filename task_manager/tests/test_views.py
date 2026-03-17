@@ -118,7 +118,6 @@ class TeamObjectCreatingMixin(TestCase):
             team_lead=cls.worker
         )
 
-class TaskListViewTest(ViewsTestMixin):
 class WorkerObjectCreatingMixin(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -131,6 +130,16 @@ class WorkerObjectCreatingMixin(TestCase):
             position=cls.pos_developer
         )
 
+
+class ProjectObjectCreatingMixin(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.project = Project.objects.create(
+            name="Project",
+            budget=1000,
+            description="Working with team",
+            status="IN_PROCESS",
+        )
 
     @classmethod
     def setUpTestData(cls):
