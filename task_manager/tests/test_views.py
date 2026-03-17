@@ -660,4 +660,659 @@ class TagCreateViewTest(LoginClientTestMixin):
         self.assertFalse(Tag.objects.filter(name="").exists())
 
 
+class PositionListViewTest(LoginClientTestMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.url = reverse("task_manager:position-list")
+        number_positions = 10
+        for num in range(number_positions):
+            Position.objects.create(name=f"Position {num}")
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get("/positions/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "task_manager/position_list.html")
+
+    def test_pagination_is_nine(self):
+        response = self.client.get(self.url, data={"page": "1"})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("is_paginated", response.context)
+        self.assertTrue(response.context["is_paginated"] == True)
+        self.assertEqual(len(response.context["position_list"]), 9)
+
+    def test_pagination_one(self):
+        response = self.client.get(self.url, data={"page": "2"})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("is_paginated", response.context)
+        self.assertTrue(response.context["is_paginated"] == True)
+        self.assertEqual(len(response.context["position_list"]), 2) # one more was created in LoginClientTestMixin
+
+    def test_context_data_correct(self):
+        response = self.client.get(self.url, data={"name": "1"})
+        self.assertIn("segment", response.context)
+        self.assertEqual(response.context["segment"], "positions")
+        self.assertIn("search_field", response.context)
+        self.assertIsInstance(response.context["search_field"], PositionSearchField)
+        self.assertEqual(response.context["search_field"].initial.get("name"), "1")
+
+    def test_queryset(self):
+        response = self.client.get(self.url, data={"name": "1"})
+        self.assertEqual(len(response.context["position_list"]), 1)
+        self.assertEqual([task_type.name for task_type in response.context["position_list"]], ["Position 1"])
+
+
+class PositionUpdateViewTest(LoginClientTestMixin, PositionObjectCreatingMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.url = reverse("task_manager:position-update", kwargs={"pk": cls.position.id})
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get(f"/positions/{self.position.pk}/update/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "task_manager/position_form.html")
+
+    def test_position_update_post(self):
+        update_data = {
+            "name": f"Updated position",
+        }
+        response = self.client.post(self.url, data=update_data)
+        self.assertEqual(response.status_code, 302)
+        self.position.refresh_from_db()
+        self.assertEqual(self.position.name, "Updated position")
+
+
+class PositionDeleteViewTest(LoginClientTestMixin, PositionObjectCreatingMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.url = reverse("task_manager:position-delete", kwargs={"pk": cls.position.pk})
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get(f"/positions/{self.position.pk}/delete/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "task_manager/position_confirm_delete.html")
+
+    def test_position_deletion_post(self):
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Position.objects.filter(name="Position").exists())
+
+
+class PositionCreateViewTest(LoginClientTestMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.url = reverse("task_manager:position-create")
+
+        cls.position = {
+            "name": "Position"
+        }
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get("/positions/create/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "task_manager/position_form.html")
+
+    def test_position_create_post(self):
+        response = self.client.post(self.url, data=self.position)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Position.objects.filter(name="Position").exists())
+
+    def test_position_create_invalid_data(self):
+        invalid_data = {
+            "name": ""
+        }
+        response = self.client.post(self.url, data=invalid_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(Position.objects.filter(name="").exists())
+
+
+class TeamListViewTest(LoginClientTestMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        number_teams = 10
+        pos_developer = Position.objects.create(name="developer")
+        worker = Worker.objects.create(
+            first_name="Ivan",
+            last_name="Ivanov",
+            username="ivan",
+            email="ivanivanow@gmail.com",
+            position=pos_developer
+        )
+        for num in range(number_teams):
+            Team.objects.create(
+                name=f"Team {num}",
+                team_lead=worker
+            )
+        cls.url = reverse("task_manager:team-list")
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get("/teams/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "task_manager/team_list.html")
+
+    def test_pagination_is_nine(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("is_paginated", response.context)
+        self.assertTrue(response.context["is_paginated"] == True)
+        self.assertEqual(len(response.context["team_list"]), 9)
+
+    def test_pagination_is_one(self):
+        response = self.client.get(self.url, data={"page": 2})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue("is_paginated", response.context)
+        self.assertTrue(response.context["is_paginated"] == True)
+        self.assertEqual(len(response.context["team_list"]), 1)
+
+    def test_context_data(self):
+        response = self.client.get(self.url, data={"name": "n"})
+        self.assertIn("segment", response.context)
+        self.assertEqual(response.context["segment"], "teams")
+        self.assertIn("search_field", response.context)
+        self.assertIsInstance(response.context["search_field"], TeamSearchField)
+        self.assertEqual(response.context["search_field"].initial.get("name"), "n")
+
+    def test_queryset(self):
+        response = self.client.get(self.url, data={"name": "1"})
+
+        self.assertEqual(len(response.context["team_list"]), 1)
+        self.assertEqual([team.name for team in response.context["team_list"]], ["Team 1"])
+
+
+class TeamUpdateViewTest(LoginClientTestMixin, TeamObjectCreatingMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.url = reverse("task_manager:team-update", kwargs={"pk": cls.team.pk})
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get(f"/teams/{self.team.pk}/update/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "task_manager/team_form.html")
+
+    def test_team_update_post(self):
+        update_data = {
+            "name": "Updated team",
+            "team_lead": self.worker.pk
+        }
+        response = self.client.post(self.url, data=update_data)
+        self.assertEqual(response.status_code, 302)
+        self.team.refresh_from_db()
+        self.assertEqual(self.team.name, "Updated team")
+
+
+class TeamDetailViewTest(LoginClientTestMixin, TeamObjectCreatingMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.url = reverse("task_manager:team-detail", kwargs={"pk": cls.team.pk})
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get(f"/teams/{self.team.pk}/detail/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "task_manager/team_detail.html")
+
+
+class TeamDeleteViewTest(LoginClientTestMixin, TeamObjectCreatingMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.url = reverse("task_manager:team-delete", kwargs={"pk": cls.team.pk})
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get(f"/teams/{self.team.pk}/delete/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "task_manager/team_confirm_delete.html")
+
+    def test_team_deletion_post(self):
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Team.objects.filter(name="Team").exists())
+
+
+class TeamCreateViewTest(LoginClientTestMixin, TeamObjectCreatingMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.team_data = {
+            "name": "Alpha",
+            "team_lead": cls.worker.pk
+        }
+        cls.url = reverse("task_manager:team-create")
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get("/teams/create/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "task_manager/team_form.html")
+
+    def test_team_create_post(self):
+        response = self.client.post(self.url, data=self.team_data)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Team.objects.filter(name="Alpha").exists())
+
+    def test_team_create_invalid_data(self):
+        invalid_data = {
+            "name": ""
+        }
+        response = self.client.post(self.url, data=invalid_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(Team.objects.filter(name="").exists())
+# ------------------
+
+class WorkerListViewTest(LoginClientTestMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        number_workers = 10 # also one from LoginClientTestMixin
+        pos_developer = Position.objects.create(name="developer")
+        chars = "abcdefghij"
+        if len(chars) == number_workers:
+            for char in chars:
+                Worker.objects.create(
+                    first_name=f"{char}",
+                    last_name=f"{char}",
+                    username=f"username {char}",
+                    position=pos_developer
+                )
+        cls.url = reverse("task_manager:worker-list")
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get("/workers/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "task_manager/worker_list.html")
+
+    def test_pagination_is_nine(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("is_paginated", response.context)
+        self.assertTrue(response.context["is_paginated"] == True)
+        self.assertEqual(len(response.context["worker_list"]), 9)
+
+    def test_pagination_is_one(self):
+        response = self.client.get(self.url, data={"page": 2})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue("is_paginated", response.context)
+        self.assertTrue(response.context["is_paginated"] == True)
+        self.assertEqual(len(response.context["worker_list"]), 2) # the second one it is loigin user
+
+    def test_context_data(self):
+        response = self.client.get(self.url, data={"full_name": "n"})
+        self.assertIn("segment", response.context)
+        self.assertEqual(response.context["segment"], "workers")
+        self.assertIn("search_field", response.context)
+        self.assertIsInstance(response.context["search_field"], WorkerSearchField)
+        self.assertEqual(response.context["search_field"].data.get("full_name"), "n")
+
+    def test_queryset(self):
+        response = self.client.get(self.url, data={"full_name": "a"})
+        self.assertEqual(len(response.context["worker_list"]), 1)
+        self.assertEqual([worker.first_name for worker in response.context["worker_list"]], ["a"])
+
+
+class WorkerUpdateViewTest(LoginClientTestMixin, WorkerObjectCreatingMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.url = reverse("task_manager:worker-update", kwargs={"pk": cls.worker.pk})
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get(f"/workers/{self.worker.pk}/update/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "task_manager/worker_form.html")
+
+    def test_team_update_post(self):
+        update_data = {
+            "first_name": "Updated_first_name",
+            "last_name": "Ivanov",
+            "username": "ivan",
+            "email": "ivanivanow@gmail.com",
+            "position": self.pos_developer.pk
+        }
+        response = self.client.post(self.url, data=update_data)
+        self.assertEqual(response.status_code, 302)
+        self.worker.refresh_from_db()
+        self.assertEqual(self.worker.first_name, "Updated_first_name")
+
+
+class WorkerDetailViewTest(LoginClientTestMixin, WorkerObjectCreatingMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.url = reverse("task_manager:worker-detail", kwargs={"pk": cls.worker.pk})
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get(f"/workers/{self.worker.pk}/detail/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "task_manager/worker_detail.html")
+
+
+class WorkerDeleteViewTest(LoginClientTestMixin, WorkerObjectCreatingMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.url = reverse("task_manager:worker-delete", kwargs={"pk": cls.worker.pk})
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get(f"/workers/{self.worker.pk}/delete/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "task_manager/worker_confirm_delete.html")
+
+    def test_team_deletion_post(self):
+        self.assertTrue(Worker.objects.filter(name="Ivan").exists()) # TODO: It is better to add to all testing for existing
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Worker.objects.filter(name="Ivan").exists())
+
+
+class WorkerCreateViewTest(LoginClientTestMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.worker_data = {
+            "first_name": "Anton",
+            "last_name": "Ivanov",
+            "username": "ivan",
+            "email": "ivanivanow@gmail.com",
+            "position": cls.position.pk,
+            "password1": "Ivan12345",
+            "password2": "Ivan12345",
+        }
+        cls.url = reverse("task_manager:worker-create")
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get("/workers/create/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "task_manager/worker_form.html")
+
+    def test_team_create_post(self):
+        response = self.client.post(self.url, data=self.worker_data)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Worker.objects.filter(first_name="Anton").exists())
+
+    def test_team_create_invalid_data(self):
+        invalid_data = {
+            "first_name": ""
+        }
+        response = self.client.post(self.url, data=invalid_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(Worker.objects.filter(first_name="").exists())
+
+# ----------------------------------------------
+class ProjectListViewTest(LoginClientTestMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        number_projects = 10
+        for num in range(number_projects):
+            Project.objects.create(
+                name=f"Project {num}",
+                budget=1000,
+                description="Working with team",
+                status="IN_PROCESS",
+            )
+        cls.url = reverse("task_manager:project-list")
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get("/projects/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertTemplateUsed(response, "task_manager/project_list.html")
+
+    def test_pagination_is_nine(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn("is_paginated", response.context)
+        self.assertTrue(response.context["is_paginated"] == True)
+        self.assertEqual(len(response.context["project_list"]), 9)
+
+    def test_pagination_is_one(self):
+        response = self.client.get(self.url, data={"page": 2})
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue("is_paginated", response.context)
+        self.assertTrue(response.context["is_paginated"] == True)
+        self.assertEqual(len(response.context["project_list"]), 1)
+
+    def test_context_data(self):
+        response = self.client.get(self.url, data={"name": "n"})
+        self.assertIn("segment", response.context)
+        self.assertEqual(response.context["segment"], "projects")
+        self.assertIn("search_field", response.context)
+        self.assertIsInstance(response.context["search_field"], ProjectSearchField)
+        self.assertEqual(response.context["search_field"].data.get("name"), "n")
+
+    def test_queryset(self):
+        response = self.client.get(self.url, data={"name": "1"})
+        self.assertEqual(len(response.context["project_list"]), 1)
+        self.assertEqual([project.name for project in response.context["project_list"]], ["Project 1"])
+
+
+class ProjectUpdateViewTest(LoginClientTestMixin, ProjectObjectCreatingMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.url = reverse("task_manager:project-update", kwargs={"pk": cls.project.pk})
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get(f"/projects/{self.project.pk}/update/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "task_manager/project_form.html")
+
+    def test_team_update_post(self):
+        update_data = {
+            "name": "Updated Project",
+            "budget": 1000,
+            "description": "Working with team",
+            "status": "IN_PROCESS",
+        }
+        response = self.client.post(self.url, data=update_data)
+        self.assertEqual(response.status_code, 302)
+        self.project.refresh_from_db()
+        self.assertEqual(self.project.name, "Updated Project")
+
+
+class ProjectDetailViewTest(LoginClientTestMixin, ProjectObjectCreatingMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.url = reverse("task_manager:project-detail", kwargs={"pk": cls.project.pk})
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get(f"/projects/{self.project.pk}/detail/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "task_manager/project_detail.html")
+
+
+class ProjectDeleteViewTest(LoginClientTestMixin, ProjectObjectCreatingMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.url = reverse("task_manager:project-delete", kwargs={"pk": cls.project.pk})
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get(f"/projects/{self.project.pk}/delete/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "task_manager/project_confirm_delete.html")
+
+    def test_team_deletion_post(self):
+        self.assertTrue(Project.objects.filter(name="Project").exists())
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Project.objects.filter(name="Project").exists())
+
+
+class ProjectCreateViewTest(LoginClientTestMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.project_data = {
+            "name": "New Project",
+            "budget": 1000,
+            "description": "Working with team",
+            "status": "IN_PROCESS",
+        }
+        cls.url = reverse("task_manager:project-create")
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get("/projects/create/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "task_manager/project_form.html")
+
+    def test_team_create_post(self):
+        response = self.client.post(self.url, data=self.project_data)
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(Project.objects.filter(name="New Project").exists())
+
+    def test_team_create_invalid_data(self):
+        invalid_data = {
+            "name": ""
+        }
+        response = self.client.post(self.url, data=invalid_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(Project.objects.filter(name="").exists())
+
 
