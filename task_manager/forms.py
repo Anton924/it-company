@@ -50,6 +50,7 @@ class WorkerCreationForm(UserCreationForm):
         fields = (
             "first_name",
             "last_name",
+            "username",
             "email",
             "position",
         )
