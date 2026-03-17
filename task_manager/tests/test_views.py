@@ -119,6 +119,19 @@ class TeamObjectCreatingMixin(TestCase):
         )
 
 class TaskListViewTest(ViewsTestMixin):
+class WorkerObjectCreatingMixin(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.pos_developer = Position.objects.create(name="developer")
+        cls.worker = Worker.objects.create(
+            first_name="Ivan",
+            last_name="Ivanov",
+            username="ivan",
+            email="ivanivanow@gmail.com",
+            position=cls.pos_developer
+        )
+
+
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
