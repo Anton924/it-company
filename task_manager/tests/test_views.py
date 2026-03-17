@@ -459,4 +459,28 @@ class TaskTypeUpdateViewTest(LoginClientTestMixin, TaskTypeObjectCreatingMixin):
         self.assertEqual(self.task_type.name, "Updated task type")
 
 
+class TaskTypeDeleteViewTest(LoginClientTestMixin, TaskTypeObjectCreatingMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.url = reverse("task_manager:task-type-delete", kwargs={"pk": cls.task_type.pk})
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get(f"/task-types/{self.task_type.pk}/delete/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "task_manager/task_type_confirm_delete.html")
+
+    def test_task_type_deletion_post(self):
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(TaskType.objects.filter(name="Task type").exists())
+
+
 
