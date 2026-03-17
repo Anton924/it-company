@@ -483,4 +483,42 @@ class TaskTypeDeleteViewTest(LoginClientTestMixin, TaskTypeObjectCreatingMixin):
         self.assertFalse(TaskType.objects.filter(name="Task type").exists())
 
 
+class TaskTypeCreateViewTest(LoginClientTestMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.url = reverse("task_manager:task-type-create")
+
+        cls.task_type = {
+            "name": "Task Type"
+        }
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get("/task-types/create/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "task_manager/task_type_form.html")
+
+    def test_task_type_create_post(self):
+        response = self.client.post(self.url, data=self.task_type)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertTrue(TaskType.objects.filter(name="Task type").exists())
+
+    def test_task_type_create_invalid_data(self):
+        invalid_data = {
+            "name": ""
+        }
+        response = self.client.post(self.url, data=invalid_data)
+
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(TaskType.objects.filter(name="").exists())
+
+
 
