@@ -23,10 +23,6 @@ from task_manager.models import (
 )
 
 
-class ViewsTestMixin(TestCase):
-    def setUp(self):
-        position = Position.objects.create(name="project manager")
-        user = Worker.objects.create(
 class LoginClientTestMixin(TestCase):
     @classmethod
     def setUpTestData(cls):
