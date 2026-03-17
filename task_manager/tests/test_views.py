@@ -195,6 +195,18 @@ class TaskListViewTest(LoginClientTestMixin, TaskObjectCreationMixin):
     def test_context_data(self):
         response = self.client.get(self.url, data={"name": "n"})
         self.assertIn("segment", response.context)
+        self.assertEqual(response.context["segment"], "tasks")
+        self.assertIn("search_field", response.context)
+        self.assertIsInstance(response.context["search_field"], TaskSearchField)
+        self.assertEqual(response.context["search_field"].initial.get("name"), "n")
+
+    def test_queryset(self):
+        response = self.client.get(self.url, data={"name": "1"})
+
+        self.assertEqual(len(response.context["task_list"]), 1)
+        self.assertEqual([task.name for task in response.context["task_list"]], ["Task 1"])
+
+
 
 
 class TaskListViewLoggedInLoggedOut(ViewsTestMixin):
