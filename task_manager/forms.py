@@ -156,7 +156,7 @@ def validate_full_name(full_name: str) -> str:
                 "First name ot Last name have to consist only from letters"
             )
         if len(full_name.split()) > 2:
-            errors.append("Field only search for First name and Last name(2 words)")
+            errors.append("Field only search for First name and Last name(maximum 2 words)")
 
         if errors:
             raise ValidationError(errors)
@@ -170,7 +170,7 @@ class WorkerSearchField(forms.Form):
         label="",
         widget=forms.TextInput(
             attrs={
-                "placeholder": "Enter first name or last name"
+                "placeholder": "Enter first name or/and last name"
             }
         ),
         validators=(validate_full_name,)
