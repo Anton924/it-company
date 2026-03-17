@@ -570,4 +570,32 @@ class TagListViewTest(LoginClientTestMixin):
         self.assertEqual([tag.name for tag in response.context["tag_list"]], ["Tag 1"])
 
 
+class TagUpdateViewTest(LoginClientTestMixin, TagObjectCreatingMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.url = reverse("task_manager:tag-update", kwargs={"pk": cls.tag.id})
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get(f"/tags/{self.tag.pk}/update/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "task_manager/tag_form.html")
+
+    def test_tag_update_post(self):
+        update_data = {
+            "name": f"Updated tag",
+        }
+        response = self.client.post(self.url, data=update_data)
+        self.assertEqual(response.status_code, 302)
+        self.tag.refresh_from_db()
+        self.assertEqual(self.tag.name, "Updated tag")
+
+
 
