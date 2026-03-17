@@ -598,4 +598,28 @@ class TagUpdateViewTest(LoginClientTestMixin, TagObjectCreatingMixin):
         self.assertEqual(self.tag.name, "Updated tag")
 
 
+class TagDeleteViewTest(LoginClientTestMixin, TagObjectCreatingMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.url = reverse("task_manager:tag-delete", kwargs={"pk": cls.tag.pk})
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get(f"/tags/{self.tag.pk}/delete/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "task_manager/tag_confirm_delete.html")
+
+    def test_tag_deletion_post(self):
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(TaskType.objects.filter(name="Tag").exists())
+
+
 
