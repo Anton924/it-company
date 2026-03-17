@@ -41,7 +41,7 @@ from task_manager.models import (
     Worker
 )
 
-
+#TODO: Switch to the self.form form the creating every time new form
 def index(request: HttpRequest):
     total_tasks_in_process = Task.objects.filter(is_completed=False).count()
     total_projects = Project.objects.filter(status="IN_PROCESS").count()
@@ -97,12 +97,6 @@ class TaskUpdateView(LoginRequiredMixin, UpdateBreadcrumbMixin, generic.UpdateVi
     model = Task
     form_class = TaskForm
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["segment"] = "task edit"
-
-        return context
-
     def get_success_url(self):
         next_url = self.request.POST.get("next")
         if self.request.POST.get("next"):
@@ -113,12 +107,6 @@ class TaskUpdateView(LoginRequiredMixin, UpdateBreadcrumbMixin, generic.UpdateVi
 
 class TaskDetailView(LoginRequiredMixin, DetailBreadcrumbMixin, generic.DetailView):
     model = Task
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["segment"] = "task in details"
-
-        return context
 
     def get_queryset(self):
         queryset = super().get_queryset()
@@ -131,12 +119,6 @@ class TaskDeleteView(LoginRequiredMixin, DeleteBreadcrumbMixin, generic.DeleteVi
     model = Task
     success_url = reverse_lazy("task_manager:task-list")
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data()
-        context["segment"] = "delete task"
-
-        return context
-
 
 class TaskCreateView(LoginRequiredMixin, CreateBreadcrumbMixin, generic.CreateView):
     model = Task
@@ -144,11 +126,6 @@ class TaskCreateView(LoginRequiredMixin, CreateBreadcrumbMixin, generic.CreateVi
     success_url = reverse_lazy("task_manager:task-list")
     crumbs = [("Add Task", reverse_lazy("task_manager:task-create"))]
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["segment"] = "create task"
-
-        return context
 
 
 class TagListView(LoginRequiredMixin, ListBreadcrumbMixin, generic.ListView):
@@ -178,35 +155,17 @@ class TagDeleteView(LoginRequiredMixin, DeleteBreadcrumbMixin, generic.DeleteVie
     model = Tag
     success_url = reverse_lazy("task_manager:tag-list")
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["segment"] = "delete tag"
-
-        return context
-
 
 class TagUpdateView(LoginRequiredMixin, UpdateWithNoDetailBreadcrumbMixin, generic.UpdateView):
     model = Tag
     success_url = reverse_lazy("task_manager:tag-list")
     fields = "__all__"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["segment"] = "edit tag"
-
-        return context
-
 
 class TagCreateView(LoginRequiredMixin, CreateBreadcrumbMixin, generic.CreateView):
     model = Tag
     success_url = reverse_lazy("task_manager:tag-list")
     fields = "__all__"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["segment"] = "create task"
-
-        return context
 
 
 class TaskTypeListView(LoginRequiredMixin, ListBreadcrumbMixin, generic.ListView):
@@ -240,12 +199,6 @@ class TaskTypeDeleteView(LoginRequiredMixin, DeleteBreadcrumbMixin, generic.Dele
     context_object_name = "task_type"
     success_url = reverse_lazy("task_manager:task-type-list")
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["segment"] = "delete task type"
-
-        return context
-
 
 class TaskTypeUpdateView(LoginRequiredMixin, UpdateWithNoDetailBreadcrumbMixin, generic.UpdateView):
     model = TaskType
@@ -253,24 +206,12 @@ class TaskTypeUpdateView(LoginRequiredMixin, UpdateWithNoDetailBreadcrumbMixin, 
     template_name = "task_manager/task_type_form.html"
     success_url = reverse_lazy("task_manager:task-type-list")
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["segment"] = "edit task type"
-
-        return context
-
 
 class TaskTypeCreateView(LoginRequiredMixin, CreateBreadcrumbMixin, generic.CreateView):
     model = TaskType
     fields = "__all__"
     template_name = "task_manager/task_type_form.html"
     success_url = reverse_lazy("task_manager:task-type-list")
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["segment"] = "create task type"
-
-        return context
 
 
 class PositionListView(LoginRequiredMixin, ListBreadcrumbMixin, generic.ListView):
@@ -301,34 +242,16 @@ class PositionUpdateView(LoginRequiredMixin, UpdateWithNoDetailBreadcrumbMixin, 
     fields = "__all__"
     success_url = reverse_lazy("task_manager:position-list")
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["segment"] = "edit position"
-
-        return context
-
 
 class PositionDeleteView(LoginRequiredMixin, DeleteBreadcrumbMixin, generic.DeleteView):
     model = Position
     success_url = reverse_lazy("task_manager:position-list")
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["segment"] = "delete position"
-
-        return context
 
 
 class PositionCreateView(LoginRequiredMixin, CreateBreadcrumbMixin, generic.CreateView):
     model = Position
     fields = "__all__"
     success_url = reverse_lazy("task_manager:position-list")
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["segment"] = "create position"
-
-        return context
 
 
 class TeamListView(LoginRequiredMixin, ListBreadcrumbMixin, generic.ListView):
@@ -359,12 +282,6 @@ class TeamUpdateView(LoginRequiredMixin, UpdateBreadcrumbMixin, generic.UpdateVi
     model = Team
     form_class = TeamForm
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["segment"] = "edit team"
-
-        return context
-
 
     def get_success_url(self):
         next_url = self.request.GET.get("next", None)
@@ -377,12 +294,6 @@ class TeamUpdateView(LoginRequiredMixin, UpdateBreadcrumbMixin, generic.UpdateVi
 class TeamDetailView(LoginRequiredMixin, DetailBreadcrumbMixin, generic.DetailView):
     model = Team
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["segment"] = "detail team"
-
-        return context
-
     def get_queryset(self):
         queryset = super().get_queryset()
         queryset = queryset.select_related("team_lead").prefetch_related("workers", "projects")
@@ -394,24 +305,11 @@ class TeamDeleteView(LoginRequiredMixin, DeleteBreadcrumbMixin, generic.DeleteVi
     model = Team
     success_url = reverse_lazy("task_manager:team-list")
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data()
-        context["segment"] = "delete team"
-
-        return context
-
-
 
 class TeamCreateView(LoginRequiredMixin, CreateBreadcrumbMixin, generic.CreateView):
     model = Team
     form_class = TeamForm
     success_url = reverse_lazy("task_manager:team-list")
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data()
-        context["segment"] = "create team"
-
-        return context
 
 
 class WorkerListView(LoginRequiredMixin, ListBreadcrumbMixin, generic.ListView):
@@ -451,7 +349,6 @@ class WorkerDetailView(LoginRequiredMixin, DetailBreadcrumbMixin, generic.Detail
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["segment"] = "worker details"
         context["undone_tasks"] = Task.objects.filter(is_completed=False, assignees=self.object.pk).order_by("deadline")
         context["done_tasks"] = Task.objects.filter(is_completed=True, assignees=self.object.pk).order_by("deadline")
 
@@ -467,23 +364,12 @@ class WorkerDetailView(LoginRequiredMixin, DetailBreadcrumbMixin, generic.Detail
 class WorkerCreateView(LoginRequiredMixin, CreateBreadcrumbMixin, generic.CreateView):
     model = Worker
     form_class = WorkerCreationForm
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["segment"] = "create worker"
-
-        return context
+    success_url = reverse_lazy("task_manager:worker-list")
 
 
 class WorkerUpdateView(LoginRequiredMixin, UpdateBreadcrumbMixin, generic.UpdateView):
     model = Worker
     form_class = WorkerUpdateForm
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["segment"] = "update worker"
-
-        return context
 
     def get_success_url(self):
         next_url = self.request.GET.get("next", None)
@@ -495,13 +381,6 @@ class WorkerUpdateView(LoginRequiredMixin, UpdateBreadcrumbMixin, generic.Update
 class WorkerDeleteView(LoginRequiredMixin, DeleteBreadcrumbMixin, generic.DeleteView):
     model = Worker
     success_url = reverse_lazy("task_manager:worker-list")
-
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["segment"] = "delete worker"
-
-        return context
 
 
 class ProjectListView(LoginRequiredMixin, ListBreadcrumbMixin, generic.ListView):
@@ -528,12 +407,6 @@ class ProjectListView(LoginRequiredMixin, ListBreadcrumbMixin, generic.ListView)
 class ProjectDetailView(LoginRequiredMixin, DetailBreadcrumbMixin, generic.DetailView):
     model = Project
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["segment"] = "detail project"
-
-        return context
-
     def get_queryset(self):
         queryset = super().get_queryset()
         queryset = queryset.prefetch_related("tasks", "teams", "teams__team_lead", "teams__workers")
@@ -544,12 +417,6 @@ class ProjectDetailView(LoginRequiredMixin, DetailBreadcrumbMixin, generic.Detai
 class ProjectUpdateView(LoginRequiredMixin, UpdateBreadcrumbMixin, generic.UpdateView):
     model = Project
     form_class = ProjectForm
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["segment"] = "update project"
-
-        return context
 
     def get_success_url(self):
         next_url = self.request.GET.get("next", None)
@@ -564,18 +431,7 @@ class ProjectCreateView(LoginRequiredMixin, CreateBreadcrumbMixin, generic.Creat
     form_class = ProjectForm
     success_url = reverse_lazy("task_manager:project-list")
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["segment"] = "create project"
-
-        return context
-
 
 class ProjectDeleteView(LoginRequiredMixin, DeleteBreadcrumbMixin, generic.DeleteView):
     model = Project
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["segment"] = "delete project"
-
-        return context
+    success_url = reverse_lazy("task_manager:project-list")

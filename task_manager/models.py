@@ -53,7 +53,7 @@ class Team(models.Model):
         related_name="teams_team_lead",
         blank=True
     )
-    workers = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="teams")
+    workers = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="teams", blank=True)
 
     def __str__(self):
         return self.name
@@ -67,7 +67,7 @@ class Project(models.Model):
         ("CANCELED", "canceled")
     )
     name = models.CharField(max_length=255)
-    teams = models.ManyToManyField(Team, related_name="projects")
+    teams = models.ManyToManyField(Team, related_name="projects", blank=True)
     budget = models.IntegerField()
     description = models.TextField(blank=True)
     status = models.CharField(

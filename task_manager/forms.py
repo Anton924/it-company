@@ -50,6 +50,7 @@ class WorkerCreationForm(UserCreationForm):
         fields = (
             "first_name",
             "last_name",
+            "username",
             "email",
             "position",
         )
@@ -88,8 +89,7 @@ class TaskSearchField(forms.Form):
         label="",
         widget= forms.TextInput(
             attrs={
-                "placeholder": "Enter the name of the task...",
-                "class": "form-control-sm"
+                "placeholder": "Enter name of the task...",
             }
         )
     )
@@ -155,12 +155,11 @@ def validate_full_name(full_name: str) -> str:
                 "First name ot Last name have to consist only from letters"
             )
         if len(full_name.split()) > 2:
-            errors.append("Field only search for First name and Last name(2 words)")
+            errors.append("Field only search for First name and Last name(maximum 2 words)")
 
         if errors:
             raise ValidationError(errors)
 
-    return full_name
 
 class WorkerSearchField(forms.Form):
     full_name = forms.CharField(
@@ -169,7 +168,7 @@ class WorkerSearchField(forms.Form):
         label="",
         widget=forms.TextInput(
             attrs={
-                "placeholder": "Enter first name or last name"
+                "placeholder": "Enter first name or/and last name"
             }
         ),
         validators=(validate_full_name,)
