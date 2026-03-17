@@ -158,36 +158,37 @@ class TaskListViewTest(LoginClientTestMixin, TaskObjectCreationMixin):
                 task_type=cls.task_type,
                 project=cls.project
             )
+        cls.url = reverse("task_manager:task-list")
 
     def test_view_url_exist_at_desired_location(self):
         response = self.client.get("/tasks/")
         self.assertEqual(response.status_code, 200)
 
     def test_view_url_accessible_by_name(self):
-        response = self.client.get(reverse("task_manager:task-list"))
+        response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
 
     def test_correct_template_name(self):
-        response = self.client.get(reverse("task_manager:task-list"))
+        response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, "task_manager/task_list.html")
 
     def test_pagination_is_nine(self):
-        response = self.client.get(reverse("task_manager:task-list"))
+        response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue("is_paginated", response.context)
+        self.assertIn("is_paginated", response.context)
         self.assertTrue(response.context["is_paginated"] == True)
         self.assertEqual(len(response.context["task_list"]), 9)
 
     def test_pagination_is_one(self):
-        response = self.client.get(reverse("task_manager:task-list") + "?page=2")
+        response = self.client.get(self.url, data={"page": 2})
         self.assertEqual(response.status_code, 200)
         self.assertTrue("is_paginated", response.context)
         self.assertTrue(response.context["is_paginated"] == True)
         self.assertEqual(len(response.context["task_list"]), 1)
 
     def test_context_data(self):
-        response = self.client.get(reverse("task_manager:task-list"))
+        response = self.client.get(self.url, data={"name": "n"})
         self.assertIn("segment", response.context)
 
 
