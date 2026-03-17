@@ -3,6 +3,15 @@ from datetime import date
 from django.test import TestCase
 from django.urls import reverse
 
+from task_manager.forms import (
+    TaskSearchField,
+    TaskTypeSearchField,
+    TagSearchField,
+    PositionSearchField,
+    TeamSearchField,
+    WorkerSearchField,
+    ProjectSearchField
+)
 from task_manager.models import (
     Tag,
     TaskType,
