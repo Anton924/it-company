@@ -252,6 +252,35 @@ class TaskUpdateViewTest(LoginClientTestMixin, TaskObjectCreationMixin):
         self.task.refresh_from_db()
         self.assertEqual(self.task.name, "Updated task")
 
+
+class TaskDetailViewTest(LoginClientTestMixin, TaskObjectCreationMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.task = Task.objects.create(
+            name="Task",
+            description="Need some time",
+            deadline=date(2026, 2, 25),
+            is_completed=False,
+            priority="LOW",
+            task_type=cls.task_type,
+            project=cls.project
+        )
+        cls.url = reverse("task_manager:task-detail", kwargs={"pk": cls.task.pk})
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get(f"/tasks/{self.task.pk}/detail/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "task_manager/task_detail.html")
+
+
     def test_user_logged_out_redirection(self):
         response = self.client.get(reverse("task_manager:task-list"))
         self.assertRedirects(response, "/accounts/login/?next=/tasks/")
