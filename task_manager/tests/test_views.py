@@ -1314,5 +1314,3 @@ class ProjectCreateViewTest(LoginClientTestMixin):
 
         self.assertEqual(response.status_code, 200)
         self.assertFalse(Project.objects.filter(name="").exists())
-
-
