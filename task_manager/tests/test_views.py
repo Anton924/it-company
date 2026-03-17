@@ -431,4 +431,32 @@ class TaskTypeListViewTest(LoginClientTestMixin):
         self.assertEqual([task_type.name for task_type in response.context["task_type_list"]], ["Task type 1"])
 
 
+class TaskTypeUpdateViewTest(LoginClientTestMixin, TaskTypeObjectCreatingMixin):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.url = reverse("task_manager:task-type-update", kwargs={"pk": cls.task_type.id})
+
+    def test_view_url_exist_at_desired_location(self):
+        response = self.client.get(f"/task-types/{self.task_type.pk}/update/")
+        self.assertEqual(response.status_code, 200)
+
+    def test_view_url_accessible_by_name(self):
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+
+    def test_correct_template_name(self):
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "task_manager/task_type_form.html")
+
+    def test_task_type_update_post(self):
+        update_data = {
+            "name": f"Updated task type",
+        }
+        response = self.client.post(self.url, data=update_data)
+        self.assertEqual(response.status_code, 302)
+        self.task_type.refresh_from_db()
+        self.assertEqual(self.task_type.name, "Updated task type")
+
+
 
