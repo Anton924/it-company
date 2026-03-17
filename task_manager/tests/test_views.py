@@ -32,6 +32,7 @@ class LoginClientTestMixin(TestCase):
         self.client.force_login(self.user)
 
 
+class TaskObjectCreationMixin(TestCase):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
@@ -141,6 +142,7 @@ class ProjectObjectCreatingMixin(TestCase):
             status="IN_PROCESS",
         )
 
+class TaskListViewTest(LoginClientTestMixin, TaskObjectCreationMixin):
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
