@@ -1,0 +1,106 @@
+/* ==========================================================================
+   Crispy Forms Customization
+   ========================================================================== */
+
+.form-control {
+    background-color: #fff;
+    border: 2px solid #e0e0e0;
+    border-radius: 4px;
+    padding: 10px 15px;
+    color: #333;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    background-color: #fff;
+    border-color: #0d6efd;
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.15);
+}
+
+.form-control.is-invalid {
+    border-color: #dc3545;
+}
+
+.form-select,
+select.form-control {
+    background-color: #fff !important;
+    border: 2px solid #e0e0e0 !important;
+    border-radius: 4px !important;
+    padding: 10px 35px 10px 15px !important;
+    color: #333 !important;
+    background-position: right 0.75rem center !important;
+    transition: all 0.3s ease;
+}
+
+.form-select:focus,
+select.form-control:focus {
+    border-color: #0d6efd !important;
+    outline: none !important;
+    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.15) !important;
+}
+
+/* ==========================================================================
+   Specific Form Widgets (Scrollable Checkboxes)
+   ========================================================================== */
+.scrollable-checkboxes {
+    max-height: 200px !important;
+    overflow-y: auto !important;
+    border: 1px solid #d2d6da !important;
+    padding: 10px !important;
+    background-color: #fff !important;
+    display: block !important;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.scrollable-checkboxes ul {
+    list-style: none !important;
+    padding-left: 0 !important;
+}
+
+.scrollable-checkboxes li {
+    margin-bottom: 5px;
+}
+
+.scrollable-checkboxes input[type="checkbox"] {
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+/* 1. Налаштування самого квадрата (чекбокса) */
+.form-check-input {
+    appearance: none !important; /* Ховаємо стандартний браузерний чекбокс */
+    -webkit-appearance: none !important;
+
+    width: 1.25rem !important;
+    height: 1.25rem !important;
+
+    background-color: #fff !important;
+    border: 2px solid #d2d6da !important; /* Колір рамки як у Material */
+    border-radius: 4px !important;
+
+    position: relative;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.form-check-input:checked {
+    background-color: #cb0c9f !important;
+    border-color: #cb0c9f !important;
+
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e") !important;
+    background-size: 80% 80% !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+}
+
+.form-check-input::before,
+.form-check-input::after {
+    content: none !important;
+    display: none !important;
+}
+
+.form-check-input:hover {
+    border-color: #cb0c9f !important;
+}Ō

@@ -47,13 +47,13 @@ class Worker(AbstractUser):
 class Team(models.Model):
     name = models.CharField(max_length=255)
     team_lead = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
+        settings.base.AUTH_USER_MODEL,
         on_delete=models.SET_NULL,
         null=True,
         related_name="teams_team_lead",
         blank=True
     )
-    workers = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="teams", blank=True)
+    workers = models.ManyToManyField(settings.base.AUTH_USER_MODEL, related_name="teams", blank=True)
 
     def __str__(self):
         return self.name
@@ -98,7 +98,7 @@ class Task(models.Model):
         default="MEDIUM"
     )
     task_type = models.ForeignKey(TaskType, on_delete=models.SET_NULL, related_name="tasks", null=True, blank=True)
-    assignees = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="tasks")
+    assignees = models.ManyToManyField(settings.base.AUTH_USER_MODEL, related_name="tasks")
     tags = models.ManyToManyField(Tag, related_name="tasks")
     project = models.ForeignKey(Project, on_delete=models.SET_NULL, null=True, blank=True, related_name="tasks")
 
