@@ -162,7 +162,7 @@ Set to False in production to hide sensitive error details.
 
 ## Links
 
-- Project homepage: 
+- Project homepage: [https://task-manager-2mg0.onrender.com/](https://task-manager-2mg0.onrender.com/)
 - Repository: [https://github.com/Anton924/it-company](https://github.com/Anton924/it-company)
 - Issue tracker: [https://github.com/Anton924/it-company/issues](https://github.com/Anton924/it-company/issues)
   - In case of sensitive bugs like security vulnerabilities, please contact
