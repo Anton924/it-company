@@ -36,13 +36,11 @@ INSTALLED_APPS = [
     "crispy_forms",
     "crispy_bootstrap5",
     "view_breadcrumbs",
-    "debug_toolbar",
 ]
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -119,9 +117,6 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-INTERNAL_IPS = [
-    "127.0.0.1",
-]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 

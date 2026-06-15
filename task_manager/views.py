@@ -41,7 +41,6 @@ from task_manager.models import (
     Worker
 )
 
-#TODO: Switch to the self.form form the creating every time new form
 def index(request: HttpRequest):
     total_tasks_in_process = Task.objects.filter(is_completed=False).count()
     total_projects = Project.objects.filter(status="IN_PROCESS").count()

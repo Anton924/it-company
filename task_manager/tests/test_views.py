@@ -490,7 +490,7 @@ class TaskTypeCreateViewTest(LoginClientTestMixin):
         cls.url = reverse("task_manager:task-type-create")
 
         cls.task_type = {
-            "name": "Task Type"
+            "name": "Task type"
         }
 
     def test_view_url_exist_at_desired_location(self):
@@ -758,7 +758,7 @@ class PositionDeleteViewTest(LoginClientTestMixin, PositionObjectCreatingMixin):
     def test_position_deletion_post(self):
         response = self.client.post(self.url)
         self.assertEqual(response.status_code, 302)
-        self.assertFalse(Position.objects.filter(name="Position").exists())
+        self.assertFalse(Position.objects.filter(name="project manager").exists())
 
 
 class PositionCreateViewTest(LoginClientTestMixin):
@@ -1099,10 +1099,10 @@ class WorkerDeleteViewTest(LoginClientTestMixin, WorkerObjectCreatingMixin):
         self.assertTemplateUsed(response, "task_manager/worker_confirm_delete.html")
 
     def test_team_deletion_post(self):
-        self.assertTrue(Worker.objects.filter(name="Ivan").exists()) # TODO: It is better to add to all testing for existing
+        self.assertTrue(Worker.objects.filter(first_name="Ivan").exists())
         response = self.client.post(self.url)
         self.assertEqual(response.status_code, 302)
-        self.assertFalse(Worker.objects.filter(name="Ivan").exists())
+        self.assertFalse(Worker.objects.filter(first_name="Ivan").exists())
 
 
 class WorkerCreateViewTest(LoginClientTestMixin):

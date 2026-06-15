@@ -146,13 +146,13 @@ class TeamSearchField(forms.Form):
         )
     )
 
-def validate_full_name(full_name: str) -> str:
+def validate_full_name(full_name: str) -> None:
     if full_name:
         errors = []
         test_str = full_name.replace(" ", "")
         if not test_str.isalpha():
             errors.append(
-                "First name ot Last name have to consist only from letters"
+                "First name or Last name must consist only of letters"
             )
         if len(full_name.split()) > 2:
             errors.append("Field only search for First name and Last name(maximum 2 words)")
@@ -186,10 +186,6 @@ class ProjectSearchField(forms.Form):
             }
         )
     )
-
-
-
-
 
 
 
