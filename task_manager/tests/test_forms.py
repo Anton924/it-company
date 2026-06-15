@@ -98,10 +98,10 @@ class TestFormMixin(TestCase):
     @property
     def worker_data(self):
         return {
-            "first_name": "Ivan",
-            "last_name": "Ivanov",
-            "username": "ivan",
-            "email": "ivanivanow@gmail.com",
+            "first_name": "Worker Name",
+            "last_name": "Worker last name",
+            "username": "worker",
+            "email": "worker@gmail.com",
             "position": self.pos_developer,
             "password1": "Password1234!",
             "password2": "Password1234!"
@@ -342,7 +342,7 @@ class WorkerSearchFieldTest(TestFormMixin):
         for idx in range(len(test_data)):
             form = WorkerSearchField(data={"full_name":test_data[idx]})
             form.is_valid()
-            self.assertFormError(form, field="full_name", errors=["First name ot Last name have to consist only from letters"])
+            self.assertFormError(form, field="full_name", errors=["First name or Last name must consist only of letters"])
 
     def test_validate_full_name_length_more_than_2(self):
         test_data = [
