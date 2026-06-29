@@ -1,0 +1,111 @@
+/* Fix crispy forms inputs to work with Material Dashboard theme */
+
+.card-body .form-control,
+.card-body .form-select {
+  border: 1px solid #d2d6da;
+  border-radius: 0.5rem;
+  padding: 0.625rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  height: auto;
+}
+
+.card-body .form-control:focus,
+.card-body .form-select:focus {
+  border-color: #e91e63;
+  box-shadow: 0 0 0 2px rgba(233, 30, 99, 0.1);
+  outline: 0;
+}
+
+.card-body textarea.form-control {
+  min-height: 80px;
+}
+
+.card-body select.form-select,
+.card-body select.form-control {
+  appearance: auto;
+  padding-right: 2rem;
+}
+
+.card-body select[multiple].form-control,
+.card-body select[multiple].form-select {
+  min-height: 120px;
+  padding: 0.375rem;
+}
+
+.card-body select[multiple] option {
+  padding: 0.375rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.card-body label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #344767;
+  margin-bottom: 0.375rem;
+}
+
+.card-body .form-check {
+  padding-left: 1.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.card-body .form-check-input {
+  width: 1.125rem;
+  height: 1.125rem;
+  margin-top: 0.125rem;
+  border: 2px solid #d2d6da;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.card-body .form-check-input:checked {
+  background-color: #e91e63;
+  border-color: #e91e63;
+}
+
+.card-body .form-check-label {
+  font-weight: 400;
+  color: #495057;
+  cursor: pointer;
+}
+
+.card-body .form-text,
+.card-body .helptext {
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-top: 0.25rem;
+}
+
+.card-body .invalid-feedback,
+.card-body .errorlist {
+  font-size: 0.75rem;
+  color: #f44335;
+  list-style: none;
+  padding-left: 0;
+  margin-top: 0.25rem;
+}
+
+.card-body .asteriskField {
+  color: #e91e63;
+}
+
+.card-body .input-group .input-group-text {
+  border: 1px solid #d2d6da;
+  background-color: #f8f9fa;
+  border-radius: 0.5rem 0 0 0.5rem;
+}
+
+.card-body .input-group .form-control {
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.card-body input[type="date"],
+.card-body input[type="datetime-local"],
+.card-body input[type="time"] {
+  appearance: auto;
+}
