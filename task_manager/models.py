@@ -43,10 +43,10 @@ class Worker(AbstractUser):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
-
     class Meta:
         verbose_name = "worker"
         verbose_name_plural = "workers"
+
 
 class Team(models.Model):
     name = models.CharField(max_length=255)
@@ -57,7 +57,9 @@ class Team(models.Model):
         related_name="teams_team_lead",
         blank=True
     )
-    workers = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="teams", blank=True)
+    workers = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, related_name="teams", blank=True
+    )
 
     def __str__(self):
         return self.name
@@ -101,10 +103,18 @@ class Task(models.Model):
         choices=PRIORITY_CHOICES,
         default="MEDIUM"
     )
-    task_type = models.ForeignKey(TaskType, on_delete=models.SET_NULL, related_name="tasks", null=True, blank=True)
-    assignees = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name="tasks")
+    task_type = models.ForeignKey(
+        TaskType, on_delete=models.SET_NULL,
+        related_name="tasks", null=True, blank=True
+    )
+    assignees = models.ManyToManyField(
+        settings.AUTH_USER_MODEL, related_name="tasks"
+    )
     tags = models.ManyToManyField(Tag, related_name="tasks")
-    project = models.ForeignKey(Project, on_delete=models.SET_NULL, null=True, blank=True, related_name="tasks")
+    project = models.ForeignKey(
+        Project, on_delete=models.SET_NULL,
+        null=True, blank=True, related_name="tasks"
+    )
 
     def __str__(self):
         return self.name

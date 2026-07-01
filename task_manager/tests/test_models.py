@@ -281,14 +281,22 @@ class TaskTest(TestMixin):
         self.assertEqual(self.task._meta.get_field("tags").remote_field.related_name, "tasks")
 
     def test_project_label(self):
-        self.assertEqual(self.task._meta.get_field("project").verbose_name, "project")
+        self.assertEqual(self.task._meta.get_field("project").verbose_name,"project")
 
     def test_project_foreign_key_model(self):
-        self.assertEqual(self.task._meta.get_field("project").remote_field.model, Project)
+        self.assertEqual(
+            self.task._meta.get_field(
+                "project"
+            ).remote_field.model, Project
+        )
 
     def test_project_on_delete_and_null_state(self):
         # Checking on_delete to be set to SET_NULL
-        self.assertEqual(self.task._meta.get_field("project").remote_field.on_delete, models.SET_NULL)
+        self.assertEqual(
+            self.task._meta.get_field(
+                "project"
+            ).remote_field.on_delete, models.SET_NULL
+        )
         # Checking so that field can store Null value
         self.assertTrue(self.task._meta.get_field("project").null)
 
@@ -296,7 +304,11 @@ class TaskTest(TestMixin):
         self.assertTrue(self.task._meta.get_field("project").blank)
 
     def test_project_related_name(self):
-        self.assertEqual(self.task._meta.get_field("project").remote_field.related_name, "tasks")
+        self.assertEqual(
+            self.task._meta.get_field(
+                "project"
+            ).remote_field.related_name, "tasks"
+        )
 
     def test_object_name_is_name(self):
         self.assertEqual(str(self.task), self.task.name)

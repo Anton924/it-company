@@ -15,7 +15,7 @@ class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
         fields = "__all__"
-        widgets={
+        widgets = {
             "tags": CheckboxSelectMultiple,
             "deadline": forms.DateTimeInput(
                 format="%Y-%m-%d",
@@ -27,7 +27,9 @@ class TaskForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["task_type"].empty_label = "Choose type of task..."
-        self.fields["project"].empty_label = "Choose project this task belong..."
+        self.fields["project"].empty_label = (
+            "Choose project this task belong..."
+        )
 
 
 class TeamForm(forms.ModelForm):
@@ -54,7 +56,6 @@ class WorkerCreationForm(UserCreationForm):
             "email",
             "position",
         )
-
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -87,7 +88,7 @@ class TaskSearchField(forms.Form):
         max_length=255,
         required=False,
         label="",
-        widget= forms.TextInput(
+        widget=forms.TextInput(
             attrs={
                 "placeholder": "Enter name of the task...",
             }
@@ -146,6 +147,7 @@ class TeamSearchField(forms.Form):
         )
     )
 
+
 def validate_full_name(full_name: str) -> None:
     if full_name:
         errors = []
@@ -155,7 +157,10 @@ def validate_full_name(full_name: str) -> None:
                 "First name or Last name must consist only of letters"
             )
         if len(full_name.split()) > 2:
-            errors.append("Field only search for First name and Last name(maximum 2 words)")
+            errors.append(
+                "Field only search for First name and Last name"
+                "(maximum 2 words)"
+            )
 
         if errors:
             raise ValidationError(errors)
@@ -186,16 +191,3 @@ class ProjectSearchField(forms.Form):
             }
         )
     )
-
-
-
-
-
-
-
-
-
-
-
-
-

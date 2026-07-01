@@ -34,20 +34,20 @@ class PositionAdmin(admin.ModelAdmin):
 
 @admin.register(Worker)
 class WorkerAdmin(UserAdmin):
-     list_display = UserAdmin.list_display + ("position", )
-     search_fields = UserAdmin.search_fields + ("position__name", ) # foreign key
+    list_display = UserAdmin.list_display + ("position",)
+    search_fields = UserAdmin.search_fields + ("position__name",)
 
-     add_fieldsets = UserAdmin.add_fieldsets + (
+    add_fieldsets = UserAdmin.add_fieldsets + (
         (
-            "Additional info", {"fields": ("position", )}
+            "Additional info", {"fields": ("position",)}
         ),
-     )
+    )
 
-     fieldsets = UserAdmin.fieldsets + (
+    fieldsets = UserAdmin.fieldsets + (
         (
-            "Additional info", {"fields": ("position", )}
+            "Additional info", {"fields": ("position",)}
         ),
-     )
+    )
 
 
 @admin.register(Task)
@@ -67,14 +67,18 @@ class TaskAdmin(admin.ModelAdmin):
     )
     fieldsets = (
         ("Core Information", {"fields": ("name", "description")}),
-        ("Status & Priority", {"fields": ("priority", "is_completed", "project")}),
+        ("Status & Priority", {
+            "fields": ("priority", "is_completed", "project")
+        }),
         ("Time Management", {"fields": ("deadline",)}),
         ("Classifications", {"fields": ("task_type", "tags")}),
         ("Ownership", {"fields": ("assignees",)})
     )
     add_fieldsets = (
         ("Core Information", {"fields": ("name", "description")}),
-        ("Status & Priority", {"fields": ("priority", "is_completed", "project")}),
+        ("Status & Priority", {
+            "fields": ("priority", "is_completed", "project")
+        }),
         ("Time Management", {"fields": ("deadline",)}),
         ("Classifications", {"fields": ("task_type", "tags")}),
         ("Ownership", {"fields": ("assignees",)})
@@ -87,8 +91,6 @@ class TaskAdmin(admin.ModelAdmin):
     @admin.display(description="Tags")
     def get_tags(self, obj):
         return ", ".join([str(tag) for tag in obj.tags.all()])
-
-
 
 
 @admin.register(Team)

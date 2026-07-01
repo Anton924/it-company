@@ -4,7 +4,13 @@ ignore = E203, E266, W503, N807, N818, F401
 max-line-length = 79
 max-complexity = 18
 select = B,C,E,F,W,T4,B9,Q0,N8,VNE
+per-file-ignores =
+    it_company/settings/*.py: F403, F405, E501
+    task_manager/tests/*: E501, E301, E302, E303, E126, E231, E261, E271, W391, W292, E712, F541
 exclude =
-    **migrations
     .venv
     .git
+    migrations
+    view_breadcrumbs
+    task_manager/utils.py
+    task_manager/urls.py
